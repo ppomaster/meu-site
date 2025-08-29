@@ -57,12 +57,12 @@
 
         // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE (substitua por seus dados reais)
         const firebaseConfig = {
-            apiKey: "SEU_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyBu6FyItXddK1pghqaEURKaMiQTMQZlJks",
+            authDomain: "colecaodefilmes-dfa7a.firebaseapp.com",
+            projectId: "colecaodefilmes-dfa7a",
+            storageBucket: "colecaodefilmes-dfa7a.firebasestorage.app",
+            messagingSenderId: "495818238503",
+            appId: "1:495818238503:web:814178c233d5fb304a7c02"
         };
 
         // Inicializa o Firebase
@@ -157,13 +157,43 @@
             }
         });
 
-        // Lógica de Busca de Filmes (será implementada no próximo passo)
-        searchButton.addEventListener('click', () => {
+        // ** Lógica de Busca de Filmes (NOVA SEÇÃO) **
+        const OMDb_API_KEY = "6cbfb854";
+
+        searchButton.addEventListener('click', async () => {
             const movieTitle = movieTitleInput.value;
-            console.log("Buscando filme:", movieTitle);
-            // Aqui vamos chamar a API do OMDb
+            if (!movieTitle) {
+                alert("Por favor, digite o título de um filme.");
+                return;
+            }
+
+            const url = `https://www.omdbapi.com/?s=${encodeURIComponent(movieTitle)}&apikey=${OMDb_API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                movieResults.innerHTML = '';
+                
+                if (data.Response === "True") {
+                    data.Search.forEach(movie => {
+                        const card = document.createElement('div');
+                        card.innerHTML = `
+                            <h4>${movie.Title} (${movie.Year})</h4>
+                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}" alt="${movie.Title}" style="width:150px;">
+                            <button class="add-to-collection" data-imdbid="${movie.imdbID}" data-title="${movie.Title}" data-year="${movie.Year}" data-poster="${movie.Poster}">Adicionar à Coleção</button>
+                        `;
+                        movieResults.appendChild(card);
+                    });
+                } else {
+                    movieResults.innerHTML = `<p>Nenhum filme encontrado. Tente novamente.</p>`;
+                }
+                
+            } catch (error) {
+                console.error("Erro ao buscar filme:", error);
+                movieResults.innerHTML = `<p>Erro ao buscar filme. Tente novamente mais tarde.</p>`;
+            }
         });
-        
     </script>
 </body>
 </html>
