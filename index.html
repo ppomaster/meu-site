@@ -1,199 +1,40 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Coleção de Filmes</title>
+  <meta charset="utf-8">
+  <title>Minha Lista M3U</title>
 </head>
 <body>
+  <h1>Lista VisionPlay</h1>
+  <div id="output">Carregando lista...</div>
 
-    <div id="login-screen">
-        <h2>Acesse sua coleção</h2>
-        <form id="email-login-form">
-            <input type="email" id="email" placeholder="E-mail" required>
-            <input type="password" id="password" placeholder="Senha" required>
-            <button type="submit" id="login-button">Entrar</button>
-            <button type="button" id="signup-button">Criar conta</button>
-        </form>
-        <button id="google-login-button">Entrar com Google</button>
-    </div>
+  <script>
+    const url = "https://cdnvisionplay.xyz/get.php?username=839035601&password=584869&type=m3u_plus&output=mpegts";
 
-    <div id="app-screen" style="display: none;">
-        <header>
-            <button id="logout-button">Sair</button>
-        </header>
+    async function loadM3U() {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const text = await resp.text();
 
-        <main>
-            <h2>Adicionar Filme</h2>
-            <div id="search-section">
-                <input type="text" id="movie-title-input" placeholder="Digite o título do filme">
-                <button id="search-button">Buscar</button>
-            </div>
-            
-            <div id="movie-results">
-                </div>
-            
-            <hr>
-            
-            <h2>Minha Coleção</h2>
-            <div id="movie-collection">
-                </div>
-        </main>
-    </div>
-
-    <script type="module">
-        // Importa as funções do Firebase que vamos usar
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            GoogleAuthProvider, 
-            signInWithPopup,
-            signInWithEmailAndPassword,
-            createUserWithEmailAndPassword,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-        // SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE (substitua por seus dados reais)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBu6FyItXddK1pghqaEURKaMiQTMQZlJks",
-            authDomain: "colecaodefilmes-dfa7a.firebaseapp.com",
-            projectId: "colecaodefilmes-dfa7a",
-            storageBucket: "colecaodefilmes-dfa7a.firebasestorage.app",
-            messagingSenderId: "495818238503",
-            appId: "1:495818238503:web:814178c233d5fb304a7c02"
-        };
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Habilita a persistência local para usar offline
-        enableIndexedDbPersistence(db)
-          .catch((err) => {
-            if (err.code === 'failed-precondition') {
-              console.warn("Múltiplas abas não são suportadas para persistência offline.");
-            } else if (err.code === 'unimplemented') {
-              console.warn("O navegador atual não suporta persistência offline.");
-            }
-          });
-
-        // Obtém referências aos elementos HTML
-        const loginScreen = document.getElementById('login-screen');
-        const appScreen = document.getElementById('app-screen');
-        const emailLoginForm = document.getElementById('email-login-form');
-        const googleLoginButton = document.getElementById('google-login-button');
-        const logoutButton = document.getElementById('logout-button');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-
-        // Novas referências de elementos da interface do app
-        const movieTitleInput = document.getElementById('movie-title-input');
-        const searchButton = document.getElementById('search-button');
-        const movieResults = document.getElementById('movie-results');
-        const movieCollection = document.getElementById('movie-collection');
-        
-        // Funções para alternar as telas
-        function showLoginScreen() {
-            loginScreen.style.display = 'block';
-            appScreen.style.display = 'none';
+        const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+        let html = "<ul>";
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].startsWith("#EXTINF")) {
+            const title = lines[i].split(",").pop();
+            const link = lines[i + 1] || "";
+            html += `<li><b>${title}</b><br><a href="${link}" target="_blank">${link}</a></li>`;
+          }
         }
+        html += "</ul>";
+        document.getElementById("output").innerHTML = html;
+      } catch (err) {
+        document.getElementById("output").innerHTML = 
+          "Erro ao carregar lista (provavelmente bloqueio CORS).<br>" + err;
+      }
+    }
 
-        function showAppScreen() {
-            loginScreen.style.display = 'none';
-            appScreen.style.display = 'block';
-        }
-
-        // Observador de autenticação
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log("Usuário logado:", user.uid);
-                showAppScreen();
-            } else {
-                console.log("Nenhum usuário logado.");
-                showLoginScreen();
-            }
-        });
-
-        // Lógica de Login com Email/Senha e Criação de Conta
-        emailLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            const submitterId = e.submitter.id;
-
-            try {
-                if (submitterId === 'login-button') {
-                    await signInWithEmailAndPassword(auth, email, password);
-                } else if (submitterId === 'signup-button') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    alert("Conta criada com sucesso! Você pode fazer login agora.");
-                }
-            } catch (error) {
-                console.error("Erro na autenticação:", error.message);
-                alert("Erro: " + error.message);
-            }
-        });
-
-        // Lógica de Login com Google
-        googleLoginButton.addEventListener('click', async () => {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Erro no login com Google:", error.message);
-                alert("Erro: " + error.message);
-            }
-        });
-
-        // Lógica de Logout
-        logoutButton.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Erro no logout:", error.message);
-            }
-        });
-
-        // ** Lógica de Busca de Filmes (NOVA SEÇÃO) **
-        const OMDb_API_KEY = "6cbfb854";
-
-        searchButton.addEventListener('click', async () => {
-            const movieTitle = movieTitleInput.value;
-            if (!movieTitle) {
-                alert("Por favor, digite o título de um filme.");
-                return;
-            }
-
-            const url = `https://www.omdbapi.com/?s=${encodeURIComponent(movieTitle)}&apikey=${OMDb_API_KEY}`;
-            
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-
-                movieResults.innerHTML = '';
-                
-                if (data.Response === "True") {
-                    data.Search.forEach(movie => {
-                        const card = document.createElement('div');
-                        card.innerHTML = `
-                            <h4>${movie.Title} (${movie.Year})</h4>
-                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}" alt="${movie.Title}" style="width:150px;">
-                            <button class="add-to-collection" data-imdbid="${movie.imdbID}" data-title="${movie.Title}" data-year="${movie.Year}" data-poster="${movie.Poster}">Adicionar à Coleção</button>
-                        `;
-                        movieResults.appendChild(card);
-                    });
-                } else {
-                    movieResults.innerHTML = `<p>Nenhum filme encontrado. Tente novamente.</p>`;
-                }
-                
-            } catch (error) {
-                console.error("Erro ao buscar filme:", error);
-                movieResults.innerHTML = `<p>Erro ao buscar filme. Tente novamente mais tarde.</p>`;
-            }
-        });
-    </script>
+    loadM3U();
+  </script>
 </body>
 </html>
