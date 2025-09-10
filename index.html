@@ -1,40 +1,444 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Minha Lista M3U</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>TV M3U Lite - Com Capas e Download</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #eee;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+  .header {
+    background: #1db954;
+    color: white;
+    padding: 10px 5px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+  .controls {
+    background: #222;
+    padding: 8px 5px;
+    position: fixed;
+    top: 40px;
+    width: 100%;
+    z-index: 90;
+    border-bottom: 1px solid #333;
+  }
+  .search-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .search-row input {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #444;
+    font-size: 14px;
+    background: #333;
+    color: #eee;
+  }
+  .search-row button {
+    padding: 6px 12px;
+    background: #1db954;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .filter-row select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #444;
+    font-size: 14px;
+    background: #333;
+    color: #eee;
+  }
+  .content {
+    margin-top: 110px;
+    padding: 5px;
+  }
+  .category {
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background: #222;
+    padding: 8px 10px;
+  }
+  .category-header {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1db954;
+  }
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .item-card {
+    background: #333;
+    border-radius: 6px;
+    width: 150px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #eee;
+  }
+  .item-card img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    background: #444;
+  }
+  .item-content {
+    padding: 8px 6px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .item-name {
+    font-size: 13px;
+    margin-bottom: 6px;
+    min-height: 32px;
+    overflow: hidden;
+  }
+  .download-btn {
+    background: #1db954;
+    border: none;
+    border-radius: 4px;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .download-all-btn {
+    background: #1db954;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #1db954;
+  }
+  .error {
+    color: #d32f2f;
+    text-align: center;
+    padding: 10px;
+  }
+</style>
 </head>
 <body>
-  <h1>Lista VisionPlay</h1>
-  <div id="output">Carregando lista...</div>
 
-  <script>
-    const url = "https://cdnvisionplay.xyz/get.php?username=839035601&password=584869&type=m3u_plus&output=mpegts";
+<div class="header">
+  <h1 style="font-size: 18px; margin: 0;">TV M3U Lite</h1>
+</div>
 
-    async function loadM3U() {
-      try {
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error("HTTP " + resp.status);
-        const text = await resp.text();
+<div class="controls">
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Pesquisar..." onkeypress="if(event.key=='Enter')pesquisar()" />
+    <button onclick="pesquisar()">Buscar</button>
+  </div>
+  <div class="filter-row">
+    <select id="categoryFilter" onchange="filtrarPorCategoria()">
+      <option value="all">Todas categorias</option>
+    </select>
+  </div>
+</div>
 
-        const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-        let html = "<ul>";
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].startsWith("#EXTINF")) {
-            const title = lines[i].split(",").pop();
-            const link = lines[i + 1] || "";
-            html += `<li><b>${title}</b><br><a href="${link}" target="_blank">${link}</a></li>`;
-          }
-        }
-        html += "</ul>";
-        document.getElementById("output").innerHTML = html;
-      } catch (err) {
-        document.getElementById("output").innerHTML = 
-          "Erro ao carregar lista (provavelmente bloqueio CORS).<br>" + err;
+<div class="content">
+  <div id="categories"></div>
+  <div id="loading" class="loading">Carregando lista...</div>
+</div>
+
+<script>
+// Configurações
+const M3U_URL = 'https://cdnvisionplay.xyz/get.php?username=839035601&password=584869&type=m3u_plus&output=mpegts';
+
+// Variáveis globais
+var allItems = [];
+var categorias = {};
+var categoriaAtual = 'all';
+
+// Inicialização
+window.addEventListener('load', () => {
+  setTimeout(carregarListaM3U, 100);
+});
+
+// Carregar lista M3U
+function carregarListaM3U() {
+  showLoading();
+  fetch(M3U_URL)
+    .then(resp => {
+      if (!resp.ok) throw new Error('Erro ao carregar');
+      return resp.text();
+    })
+    .then(text => {
+      processarM3U(text);
+      hideLoading();
+    })
+    .catch(e => showError(e.message));
+}
+
+// Processar conteúdo M3U
+function processarM3U(text) {
+  allItems = [];
+  categorias = {};
+  var lines = text.split('\n');
+  var currentItem = null;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+
+    if (line.startsWith('#EXTINF:')) {
+      currentItem = parseExtInf(line);
+    } else if (currentItem && line && !line.startsWith('#') && line.startsWith('http')) {
+      currentItem.url = line;
+      allItems.push(currentItem);
+
+      if (!categorias[currentItem.categoria]) {
+        categorias[currentItem.categoria] = [];
+      }
+      categorias[currentItem.categoria].push(currentItem);
+
+      currentItem = null;
+    }
+  }
+
+  preencherFiltroCategorias();
+  filtrarPorCategoria();
+}
+
+// Parse de EXTINF para nome, categoria e capa
+function parseExtInf(line) {
+  var item = { categoria: 'Geral', nome: '', url: '', capa: '' };
+
+  // group-title
+  var gtStart = line.indexOf('group-title="');
+  if (gtStart > -1) {
+    var gtEnd = line.indexOf('"', gtStart + 13);
+    if (gtEnd > -1) {
+      item.categoria = line.substring(gtStart + 13, gtEnd);
+    }
+  }
+
+  // tvg-logo (capa)
+  var logoStart = line.indexOf('tvg-logo="');
+  if (logoStart > -1) {
+    var logoEnd = line.indexOf('"', logoStart + 9);
+    if (logoEnd > -1) {
+      item.capa = line.substring(logoStart + 9, logoEnd);
+    }
+  }
+
+  // nome
+  var lastComma = line.lastIndexOf(',');
+  if (lastComma > -1) {
+    item.nome = line.substring(lastComma + 1).trim();
+  }
+
+  return item;
+}
+
+// preencher filtro de categorias
+function preencherFiltroCategorias() {
+  var select = document.getElementById('categoryFilter');
+  while (select.options.length > 1) select.remove(1);
+
+  var cats = Object.keys(categorias).sort();
+  for (var i = 0; i < cats.length; i++) {
+    var opt = document.createElement('option');
+    opt.value = cats[i];
+    opt.textContent = cats[i];
+    select.appendChild(opt);
+  }
+}
+
+// filtrar por categoria
+function filtrarPorCategoria() {
+  categoriaAtual = document.getElementById('categoryFilter').value;
+  renderizarCategorias();
+}
+
+// renderizar categorias e itens
+function renderizarCategorias() {
+  var container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  var catsToShow = categoriaAtual === 'all' ? Object.keys(categorias) : [categoriaAtual];
+
+  for (var i = 0; i < catsToShow.length; i++) {
+    var cat = catsToShow[i];
+    var items = categorias[cat] || [];
+
+    if (items.length === 0) continue;
+
+    var catDiv = document.createElement('div');
+    catDiv.className = 'category';
+
+    // Header + botão baixar tudo
+    var header = document.createElement('div');
+    header.className = 'category-header';
+    header.textContent = cat + ' (' + items.length + ')';
+
+    var downloadAllBtn = document.createElement('button');
+    downloadAllBtn.textContent = 'Baixar tudo';
+    downloadAllBtn.className = 'download-all-btn';
+    downloadAllBtn.onclick = () => baixarTodos(items);
+    header.appendChild(downloadAllBtn);
+    catDiv.appendChild(header);
+
+    // Itens em grid
+    var itemsDiv = document.createElement('div');
+    itemsDiv.className = 'items';
+
+    items.forEach(item => {
+      itemsDiv.appendChild(createItemCard(item));
+    });
+
+    catDiv.appendChild(itemsDiv);
+    container.appendChild(catDiv);
+  }
+}
+
+// criar card de item com capa, nome e botão download
+function createItemCard(item) {
+  var div = document.createElement('div');
+  div.className = 'item-card';
+
+  var img = document.createElement('img');
+  img.src = item.capa || 'https://via.placeholder.com/150x90?text=No+Image';
+  img.alt = item.nome;
+
+  var contentDiv = document.createElement('div');
+  contentDiv.className = 'item-content';
+
+  var nome = document.createElement('div');
+  nome.className = 'item-name';
+  nome.textContent = item.nome;
+
+  var downloadBtn = document.createElement('button');
+  downloadBtn.className = 'download-btn';
+  downloadBtn.textContent = 'Download';
+  downloadBtn.onclick = () => baixarItem(item.url, item.nome);
+
+  contentDiv.appendChild(nome);
+  contentDiv.appendChild(downloadBtn);
+
+  div.appendChild(img);
+  div.appendChild(contentDiv);
+
+  return div;
+}
+
+// função para baixar arquivo individual (abre em nova aba para baixar)
+function baixarItem(url, nome) {
+  // Criar âncora dinâmica para download
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = nome || 'arquivo';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// baixar todos itens da categoria (cada link em nova aba - alternativa simples)
+function baixarTodos(items) {
+  if (!confirm(`Baixar todos os ${items.length} itens desta categoria?`)) return;
+
+  for (let item of items) {
+    baixarItem(item.url, item.nome);
+  }
+}
+
+// Pesquisar
+function pesquisar() {
+  var query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  if (!query) {
+    filtrarPorCategoria();
+    return;
+  }
+
+  var container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  var results = [];
+  for (var cat in categorias) {
+    for (var i = 0; i < categorias[cat].length; i++) {
+      var item = categorias[cat][i];
+      if (item.nome.toLowerCase().includes(query)) {
+        results.push(item);
       }
     }
+  }
 
-    loadM3U();
-  </script>
+  if (results.length === 0) {
+    container.innerHTML = '<div class="category">Nenhum resultado encontrado</div>';
+    return;
+  }
+
+  // Agrupar resultados por categoria
+  var grouped = {};
+  for (var i = 0; i < results.length; i++) {
+    var cat = results[i].categoria;
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(results[i]);
+  }
+
+  // Mostrar resultados
+  for (var cat in grouped) {
+    var catDiv = document.createElement('div');
+    catDiv.className = 'category';
+
+    var header = document.createElement('div');
+    header.className = 'category-header';
+    header.textContent = cat + ' (' + grouped[cat].length + ')';
+
+    var itemsDiv = document.createElement('div');
+    itemsDiv.className = 'items';
+
+    grouped[cat].forEach(item => {
+      itemsDiv.appendChild(createItemCard(item));
+    });
+
+    catDiv.appendChild(header);
+    catDiv.appendChild(itemsDiv);
+    container.appendChild(catDiv);
+  }
+}
+
+// Utils UI
+function showLoading() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('categories').innerHTML = '';
+}
+
+function hideLoading() {
+  document.getElementById('loading').style.display = 'none';
+}
+
+function showError(msg) {
+  document.getElementById('loading').innerHTML = '<div class="error">' + msg + '</div>';
+}
+</script>
+
 </body>
 </html>
