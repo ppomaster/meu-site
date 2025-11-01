@@ -1,144 +1,1116 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TV M3U Lite - Local</title>
-<style>
-  /* Mesma parte de CSS do código anterior, adaptada para simplicidade */
-  body {
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: #eee;
-    font-size: 14px;
-    line-height: 1.3;
-    padding: 10px;
-  }
-  .item-card {
-    background: #333;
-    border-radius: 6px;
-    width: 180px;
-    margin: 8px;
-    display: inline-block;
-    vertical-align: top;
-    color: #eee;
-  }
-  .item-card img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
-    background: #444;
-  }
-  .item-name {
-    padding: 6px;
-    font-size: 14px;
-  }
-  .download-btn {
-    background: #1db954;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 8px;
-    color: white;
-    cursor: pointer;
-    margin: 6px;
-    width: calc(100% - 12px);
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cemitério Tycoon - Melhorado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ... (manter todos os estilos anteriores) ... */
+
+        /* MELHORIA 1: Botões mais intuitivos e acessíveis */
+        .button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .button:hover::after {
+            left: 100%;
+        }
+        
+        .button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .button-success {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+        }
+        
+        .button-warning {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        }
+        
+        .button-danger {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+        }
+        
+        .button-small {
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            min-height: 40px;
+        }
+        
+        /* MELHORIA 2: Indicadores visuais de estado dos botões */
+        .cost-indicator {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+        
+        .affordable {
+            color: #2ecc71;
+        }
+        
+        .unaffordable {
+            color: #e74c3c;
+        }
+        
+        /* MELHORIA 3: Tooltips para elementos importantes */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--primary-dark) transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* MELHORIA 4: Melhor organização visual das abas */
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-section {
+            margin-bottom: 25px;
+        }
+        
+        .tab-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* MELHORIA 5: Indicadores de progresso mais visíveis */
+        .progress-container {
+            margin: 12px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--light);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--success-dark));
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                -45deg, 
+                rgba(255, 255, 255, 0.2) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.2) 50%, 
+                rgba(255, 255, 255, 0.2) 75%, 
+                transparent 75%, 
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: move 1s linear infinite;
+        }
+        
+        @keyframes move {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+        
+        /* MELHORIA 6: Melhor feedback visual para ações */
+        .action-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 2000;
+            font-weight: bold;
+            animation: popIn 0.5s, fadeOut 0.5s 1.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        /* MELHORIA 7: Sistema de dicas contextuais */
+        .context-hint {
+            position: absolute;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: help;
+            top: -5px;
+            right: -5px;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        
+        /* MELHORIA 8: Melhor organização da grade do cemitério */
+        .cemetery-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 6px;
+            width: 100%;
+            min-height: 350px;
+            background: #7f8c8d;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .grid-cell {
+            background: #95a5a6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            aspect-ratio: 1/1;
+            font-size: 1.2rem;
+            position: relative;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+        
+        .grid-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .grid-cell:hover::before {
+            opacity: 1;
+        }
+        
+        /* MELHORIA 9: Sistema de notificações persistentes */
+        .notification-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .persistent-notification {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .persistent-notification.success {
+            border-left-color: var(--success);
+        }
+        
+        .persistent-notification.warning {
+            border-left-color: var(--accent);
+        }
+        
+        .persistent-notification.error {
+            border-left-color: var(--secondary);
+        }
+        
+        .persistent-notification .close {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        
+        .persistent-notification .close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* MELHORIA 10: Sistema de ajuda integrado */
+        .help-button {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .help-button:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        .help-panel {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+            padding: 20px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .help-panel.active {
+            display: block;
+        }
+        
+        .help-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+        
+        .help-content {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text);
+        }
+        
+        /* Responsividade melhorada */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 8px;
+            }
+            
+            .cemetery-grid {
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+                min-height: 300px;
+            }
+            
+            .button {
+                min-height: 44px;
+                font-size: 0.9rem;
+            }
+            
+            .notification-panel {
+                width: 250px;
+            }
+            
+            .help-panel {
+                width: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tab {
+                padding: 10px 3px;
+                font-size: 0.8rem;
+            }
+            
+            .tab i {
+                font-size: 1rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .cemetery-grid {
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: repeat(5, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- ... (manter a estrutura HTML anterior) ... -->
+    
+    <!-- MELHORIA 10: Painel de ajuda -->
+    <button class="help-button" id="help-button">
+        <i class="fas fa-question"></i>
+    </button>
+    
+    <div class="help-panel" id="help-panel">
+        <div class="help-title" id="help-title">Ajuda do Cemitério Tycoon</div>
+        <div class="help-content" id="help-content">
+            <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+    </div>
+    
+    <!-- MELHORIA 9: Painel de notificações persistentes -->
+    <div class="notification-panel" id="notification-panel">
+        <!-- Notificações serão adicionadas aqui -->
+    </div>
 
-<h2>TV M3U Lite - Local</h2>
-<input type="file" id="fileInput" accept=".m3u,.m3u8" />
-<div id="itemsContainer"></div>
-
-<script>
-  var allItems = [];
-
-  document.getElementById('fileInput').addEventListener('change', function(e) {
-    if (e.target.files.length === 0) return;
-    var file = e.target.files[0];
-    var reader = new FileReader();
-
-    reader.onload = function(evt) {
-      parseM3U(evt.target.result);
-    };
-    reader.readAsText(file);
-  });
-
-  function parseM3U(text) {
-    allItems = [];
-    var lines = text.split('\n');
-    var currentItem = null;
-    var container = document.getElementById('itemsContainer');
-    container.innerHTML = '';
-
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-
-      if (line.startsWith('#EXTINF:')) {
-        currentItem = parseExtInf(line);
-      } else if (currentItem && line && !line.startsWith('#') && line.startsWith('http')) {
-        currentItem.url = line;
-        allItems.push(currentItem);
-        currentItem = null;
-      }
-    }
-    renderItems();
-  }
-
-  function parseExtInf(line) {
-    var item = { nome: '', url: '', capa: '' };
-    var logoStart = line.indexOf('tvg-logo="');
-    if (logoStart > -1) {
-      var logoEnd = line.indexOf('"', logoStart + 9);
-      if (logoEnd > -1) {
-        item.capa = line.substring(logoStart + 9, logoEnd);
-      }
-    }
-    var lastComma = line.lastIndexOf(',');
-    if (lastComma > -1) {
-      item.nome = line.substring(lastComma + 1).trim();
-    }
-    return item;
-  }
-
-  function renderItems() {
-    var container = document.getElementById('itemsContainer');
-    container.innerHTML = '';
-    allItems.forEach(item => {
-      var div = document.createElement('div');
-      div.className = 'item-card';
-
-      var img = document.createElement('img');
-      img.src = item.capa || 'https://via.placeholder.com/180x100?text=No+Image';
-      img.alt = item.nome;
-
-      var nome = document.createElement('div');
-      nome.className = 'item-name';
-      nome.textContent = item.nome;
-
-      var btn = document.createElement('button');
-      btn.className = 'download-btn';
-      btn.textContent = 'Download';
-      btn.onclick = () => baixarItem(item.url, item.nome);
-
-      div.appendChild(img);
-      div.appendChild(nome);
-      div.appendChild(btn);
-
-      container.appendChild(div);
-    });
-  }
-
-  function baixarItem(url, nome) {
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = nome || 'arquivo';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-</script>
+    <script>
+        // ... (manter todo o código JavaScript anterior) ...
+        
+        // MELHORIA 1: Sistema de verificação de acessibilidade dos botões
+        function updateButtonStates() {
+            // Verificar todos os botões de construção
+            const buildButtons = [
+                { id: 'build-grave-button', cost: 100 },
+                { id: 'build-mine-button', cost: 500 },
+                { id: 'build-mausoleum-button', cost: 1500 },
+                { id: 'build-chapel-button', cost: 2000 },
+                { id: 'build-statue-button', cost: 300 },
+                { id: 'build-ornate-tombstone-button', cost: 400 },
+                { id: 'build-garden-button', cost: 600 },
+                { id: 'build-fountain-button', cost: 1200 },
+                { id: 'expand-button', cost: 2000 }
+            ];
+            
+            buildButtons.forEach(button => {
+                const element = document.getElementById(button.id);
+                if (element) {
+                    const canAfford = gameState.money >= button.cost;
+                    const hasSpace = button.id === 'expand-button' || 
+                                    gameState.cemeteryGrid.some(cell => cell.type === 'empty');
+                    
+                    element.disabled = !canAfford || !hasSpace;
+                    
+                    // Atualizar indicador visual
+                    const costIndicator = element.querySelector('.cost-indicator') || 
+                                         document.createElement('div');
+                    if (!element.contains(costIndicator)) {
+                        costIndicator.className = 'cost-indicator';
+                        element.appendChild(costIndicator);
+                    }
+                    
+                    costIndicator.textContent = canAfford ? 'Pode comprar' : 'Dinheiro insuficiente';
+                    costIndicator.className = `cost-indicator ${canAfford ? 'affordable' : 'unaffordable'}`;
+                    
+                    // Adicionar tooltip se não houver espaço
+                    if (!hasSpace && button.id !== 'expand-button') {
+                        element.title = 'Não há espaço vazio no cemitério!';
+                    } else {
+                        element.title = '';
+                    }
+                }
+            });
+            
+            // Verificar botões de ações
+            const actionButtons = [
+                { id: 'basic-funeral-button', cost: 200, requires: 'coffins', amount: 1 },
+                { id: 'premium-funeral-button', cost: 500, requires: 'coffins', amount: 1 },
+                { id: 'basic-plan-button', cost: 150 },
+                { id: 'premium-plan-button', cost: 400 },
+                { id: 'basic-pickaxe-button', cost: 20 },
+                { id: 'improved-pickaxe-button', cost: 100 },
+                { id: 'deep-mining-button', cost: 200 },
+                { id: 'short-expedition-button', cost: 500 },
+                { id: 'long-expedition-button', cost: 1500 }
+            ];
+            
+            actionButtons.forEach(button => {
+                const element = document.getElementById(button.id);
+                if (element) {
+                    const canAfford = gameState.money >= button.cost;
+                    let hasRequirements = true;
+                    
+                    if (button.requires) {
+                        hasRequirements = gameState[button.requires] >= button.amount;
+                    }
+                    
+                    element.disabled = !canAfford || !hasRequirements;
+                    
+                    // Atualizar indicador visual
+                    const costIndicator = element.querySelector('.cost-indicator') || 
+                                         document.createElement('div');
+                    if (!element.contains(costIndicator)) {
+                        costIndicator.className = 'cost-indicator';
+                        element.appendChild(costIndicator);
+                    }
+                    
+                    if (!canAfford) {
+                        costIndicator.textContent = 'Dinheiro insuficiente';
+                        costIndicator.className = 'cost-indicator unaffordable';
+                    } else if (!hasRequirements) {
+                        costIndicator.textContent = button.requires === 'coffins' ? 'Caixões insuficientes' : 'Recursos insuficientes';
+                        costIndicator.className = 'cost-indicator unaffordable';
+                    } else {
+                        costIndicator.textContent = 'Pode realizar';
+                        costIndicator.className = 'cost-indicator affordable';
+                    }
+                }
+            });
+        }
+        
+        // MELHORIA 2: Sistema de tooltips contextuais
+        function initializeTooltips() {
+            // Adicionar tooltips aos botões importantes
+            const tooltipElements = [
+                { selector: '#build-grave-button', text: 'Construa túmulos para gerar renda passiva constante' },
+                { selector: '#build-mine-button', text: 'Minas produzem ossos e ocasionalmente tesouros valiosos' },
+                { selector: '#build-mausoleum-button', text: 'Mausoléus geram renda passiva premium' },
+                { selector: '#build-chapel-button', text: 'Capelas aumentam a eficiência dos velórios' },
+                { selector: '#expand-button', text: 'Expanda o cemitério para ter mais espaço para construções' },
+                { selector: '#basic-funeral-button', text: 'Realize velórios básicos para ganhar dinheiro rapidamente' },
+                { selector: '#premium-funeral-button', text: 'Velórios premium rendem mais, mas demoram mais para completar' },
+                { selector: '#basic-pickaxe-button', text: 'Use a picareta básica para encontrar ossos e pequenos tesouros' },
+                { selector: '#improved-pickaxe-button', text: 'A picareta aprimorada tem maior chance de encontrar itens valiosos' },
+                { selector: '#prestige-button', text: 'Reinicie seu progresso para ganhar Pontos de Prestígio e desbloquear melhorias permanentes' }
+            ];
+            
+            tooltipElements.forEach(item => {
+                const element = document.querySelector(item.selector);
+                if (element) {
+                    element.classList.add('tooltip');
+                    
+                    const tooltip = document.createElement('span');
+                    tooltip.className = 'tooltiptext';
+                    tooltip.textContent = item.text;
+                    
+                    element.appendChild(tooltip);
+                }
+            });
+        }
+        
+        // MELHORIA 3: Sistema de dicas contextuais
+        function showContextHint(element, message) {
+            // Remover dica anterior se existir
+            const existingHint = element.querySelector('.context-hint');
+            if (existingHint) existingHint.remove();
+            
+            const hint = document.createElement('div');
+            hint.className = 'context-hint';
+            hint.textContent = '!';
+            hint.title = message;
+            
+            element.style.position = 'relative';
+            element.appendChild(hint);
+            
+            // Remover após 10 segundos
+            setTimeout(() => {
+                if (hint.parentNode) {
+                    hint.parentNode.removeChild(hint);
+                }
+            }, 10000);
+        }
+        
+        // MELHORIA 4: Sistema de notificações persistentes
+        function showPersistentNotification(message, type = 'info', duration = 5000) {
+            const notificationPanel = document.getElementById('notification-panel');
+            
+            const notification = document.createElement('div');
+            notification.className = `persistent-notification ${type}`;
+            
+            // Ícone baseado no tipo
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            if (type === 'error') icon = 'exclamation-circle';
+            
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+                <div class="close"><i class="fas fa-times"></i></div>
+            `;
+            
+            notificationPanel.appendChild(notification);
+            
+            // Fechar notificação ao clicar no X
+            notification.querySelector('.close').addEventListener('click', () => {
+                notification.remove();
+            });
+            
+            // Remover automaticamente após o tempo especificado
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, duration);
+            }
+            
+            // Limitar a 5 notificações
+            while (notificationPanel.children.length > 5) {
+                notificationPanel.removeChild(notificationPanel.firstChild);
+            }
+        }
+        
+        // MELHORIA 5: Sistema de ajuda integrado
+        function initializeHelpSystem() {
+            const helpButton = document.getElementById('help-button');
+            const helpPanel = document.getElementById('help-panel');
+            const helpTitle = document.getElementById('help-title');
+            const helpContent = document.getElementById('help-content');
+            
+            // Alternar visibilidade do painel de ajuda
+            helpButton.addEventListener('click', () => {
+                helpPanel.classList.toggle('active');
+                
+                if (helpPanel.classList.contains('active')) {
+                    updateHelpContent();
+                }
+            });
+            
+            // Fechar ajuda ao clicar fora
+            document.addEventListener('click', (e) => {
+                if (!helpPanel.contains(e.target) && e.target !== helpButton) {
+                    helpPanel.classList.remove('active');
+                }
+            });
+            
+            // Conteúdo de ajuda baseado na aba atual
+            const helpContents = {
+                cemetery: {
+                    title: 'Ajuda - Cemitério',
+                    content: 'Aqui você pode construir e gerenciar seu cemitério. Expanda o terreno para ter mais espaço e construa diferentes tipos de estruturas para gerar renda passiva e recursos.'
+                },
+                funeral: {
+                    title: 'Ajuda - Velórios',
+                    content: 'Realize velórios para ganhar dinheiro rapidamente. Velórios premium rendem mais, mas demoram mais para completar. Venda planos funerários para aumentar sua renda passiva.'
+                },
+                mining: {
+                    title: 'Ajuda - Mineração',
+                    content: 'Use picaretas para encontrar ossos, dinheiro e tesouros. Picaretas melhores têm maior chance de encontrar itens valiosos. Envie expedições para obter recursos extras.'
+                },
+                employees: {
+                    title: 'Ajuda - Funcionários',
+                    content: 'Contrate funcionários para automatizar tarefas. Cada tipo de funcionário tem uma especialidade diferente. Gerentes aumentam a eficiência de todos os funcionários.'
+                },
+                prestige: {
+                    title: 'Ajuda - Prestígio',
+                    content: 'Quando tiver dinheiro suficiente, você pode reiniciar seu progresso em troca de Pontos de Prestígio. Use esses pontos para comprar melhorias permanentes.'
+                },
+                achievements: {
+                    title: 'Ajuda - Conquistas',
+                    content: 'Complete objetivos para desbloquear conquistas. Cada conquista desbloqueada concede recompensas especiais.'
+                }
+            };
+            
+            // Atualizar conteúdo da ajuda baseado na aba atual
+            function updateHelpContent() {
+                const activeTab = document.querySelector('.tab.active');
+                if (activeTab) {
+                    const tabId = activeTab.getAttribute('data-tab');
+                    if (helpContents[tabId]) {
+                        helpTitle.textContent = helpContents[tabId].title;
+                        helpContent.textContent = helpContents[tabId].content;
+                    }
+                }
+            }
+            
+            // Atualizar ajuda quando mudar de aba
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    if (helpPanel.classList.contains('active')) {
+                        updateHelpContent();
+                    }
+                });
+            });
+        }
+        
+        // MELHORIA 6: Feedback visual aprimorado para ações
+        function showActionFeedback(message, icon = 'check') {
+            const feedback = document.createElement('div');
+            feedback.className = 'action-feedback';
+            feedback.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            
+            document.body.appendChild(feedback);
+            
+            // Remover após a animação
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.parentNode.removeChild(feedback);
+                }
+            }, 2000);
+        }
+        
+        // MELHORIA 7: Sistema de dicas automáticas para novos jogadores
+        function showNewPlayerHints() {
+            // Verificar se é a primeira vez jogando
+            const hasPlayedBefore = localStorage.getItem('cemeteryTycoonHasPlayed');
+            
+            if (!hasPlayedBefore) {
+                // Mostrar dicas iniciais
+                setTimeout(() => {
+                    showPersistentNotification('Bem-vindo ao Cemitério Tycoon! Comece construindo alguns túmulos.', 'info', 10000);
+                }, 2000);
+                
+                setTimeout(() => {
+                    showPersistentNotification('Use a picareta básica para encontrar ossos e outros recursos.', 'info', 10000);
+                }, 8000);
+                
+                setTimeout(() => {
+                    showPersistentNotification('Contrate funcionários para automatizar tarefas e ganhar recursos mesmo quando estiver offline.', 'info', 10000);
+                }, 15000);
+                
+                // Marcar como já jogou
+                localStorage.setItem('cemeteryTycoonHasPlayed', 'true');
+            }
+        }
+        
+        // MELHORIA 8: Sistema de estatísticas detalhadas
+        function initializeStatistics() {
+            // Adicionar aba de estatísticas se não existir
+            if (!document.getElementById('stats-tab')) {
+                const statsTab = document.createElement('div');
+                statsTab.className = 'tab';
+                statsTab.setAttribute('data-tab', 'stats');
+                statsTab.innerHTML = '<i class="fas fa-chart-bar"></i><span>Estatísticas</span>';
+                
+                const tabContainer = document.querySelector('.tab-container');
+                tabContainer.appendChild(statsTab);
+                
+                const statsContent = document.createElement('div');
+                statsContent.id = 'stats-tab';
+                statsContent.className = 'tab-content';
+                statsContent.innerHTML = `
+                    <div class="section-header">
+                        <div class="section-title">Estatísticas do Jogo</div>
+                    </div>
+                    <div class="stats-grid" id="stats-grid">
+                        <!-- Estatísticas serão preenchidas aqui -->
+                    </div>
+                `;
+                
+                const gameScreen = document.getElementById('game-screen');
+                const eventLog = document.querySelector('.event-log');
+                gameScreen.insertBefore(statsContent, eventLog);
+                
+                // Adicionar evento de clique na aba
+                statsTab.addEventListener('click', function() {
+                    switchTab('stats');
+                    updateStatistics();
+                });
+            }
+        }
+        
+        function updateStatistics() {
+            const statsGrid = document.getElementById('stats-grid');
+            if (!statsGrid) return;
+            
+            const stats = [
+                { label: 'Dinheiro Ganho Total', value: gameState.totalMoneyEarned || 0, icon: '💰' },
+                { label: 'Ossos Coletados Total', value: gameState.totalBonesCollected || 0, icon: '🦴' },
+                { label: 'Tesouros Encontrados Total', value: gameState.totalTreasuresFound || 0, icon: '💎' },
+                { label: 'Velórios Realizados', value: gameState.funeralsHeld || 0, icon: '⚰️' },
+                { label: 'Planos Vendidos', value: gameState.plansSold || 0, icon: '📄' },
+                { label: 'Tempo de Jogo', value: formatPlayTime(gameState.playTime || 0), icon: '⏱️' },
+                { label: 'Prestígio Ganho', value: gameState.totalPrestigeEarned || 0, icon: '⭐' },
+                { label: 'Funcionários Contratados', value: gameState.totalEmployeesHired || 0, icon: '👥' }
+            ];
+            
+            statsGrid.innerHTML = '';
+            
+            stats.forEach(stat => {
+                const statCard = document.createElement('div');
+                statCard.className = 'stat-card';
+                statCard.innerHTML = `
+                    <div class="stat-card-icon">${stat.icon}</div>
+                    <div class="stat-card-value">${stat.value}</div>
+                    <div class="stat-card-label">${stat.label}</div>
+                `;
+                
+                statsGrid.appendChild(statCard);
+            });
+        }
+        
+        function formatPlayTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            } else {
+                return `${minutes}m`;
+            }
+        }
+        
+        // MELHORIA 9: Sistema de salvamento automático
+        function initializeAutoSave() {
+            // Salvar a cada 30 segundos
+            setInterval(() => {
+                saveGame();
+                showPersistentNotification('Jogo salvo automaticamente', 'success', 2000);
+            }, 30000);
+            
+            // Salvar quando o jogador sair da página
+            window.addEventListener('beforeunload', () => {
+                saveGame();
+            });
+        }
+        
+        // MELHORIA 10: Sistema de objetivos e missões
+        function initializeQuestSystem() {
+            // Adicionar sistema de missões se não existir
+            if (!document.getElementById('quests-tab')) {
+                const questsTab = document.createElement('div');
+                questsTab.className = 'tab';
+                questsTab.setAttribute('data-tab', 'quests');
+                questsTab.innerHTML = '<i class="fas fa-tasks"></i><span>Missões</span>';
+                
+                const tabContainer = document.querySelector('.tab-container');
+                tabContainer.appendChild(questsTab);
+                
+                const questsContent = document.createElement('div');
+                questsContent.id = 'quests-tab';
+                questsContent.className = 'tab-content';
+                questsContent.innerHTML = `
+                    <div class="section-header">
+                        <div class="section-title">Missões Ativas</div>
+                    </div>
+                    <div class="quests-list" id="active-quests">
+                        <!-- Missões ativas serão preenchidas aqui -->
+                    </div>
+                    <div class="section-header">
+                        <div class="section-title">Missões Concluídas</div>
+                    </div>
+                    <div class="quests-list" id="completed-quests">
+                        <!-- Missões concluídas serão preenchidas aqui -->
+                    </div>
+                `;
+                
+                const gameScreen = document.getElementById('game-screen');
+                const eventLog = document.querySelector('.event-log');
+                gameScreen.insertBefore(questsContent, eventLog);
+                
+                // Adicionar evento de clique na aba
+                questsTab.addEventListener('click', function() {
+                    switchTab('quests');
+                    updateQuests();
+                });
+            }
+            
+            // Inicializar missões se não existirem
+            if (!gameState.quests) {
+                gameState.quests = {
+                    active: [
+                        { id: 'build5graves', name: 'Construtor Iniciante', description: 'Construa 5 túmulos', target: 5, progress: 0, reward: { money: 500, bones: 10 }, completed: false },
+                        { id: 'firstMine', name: 'Primeira Mina', description: 'Construa sua primeira mina', target: 1, progress: 0, reward: { money: 300, bones: 5 }, completed: false },
+                        { id: 'earn1000', name: 'Fazendo Dinheiro', description: 'Acumule 1000 de dinheiro', target: 1000, progress: 0, reward: { money: 200, bones: 5 }, completed: false }
+                    ],
+                    completed: []
+                };
+            }
+        }
+        
+        function updateQuests() {
+            const activeQuests = document.getElementById('active-quests');
+            const completedQuests = document.getElementById('completed-quests');
+            
+            if (!activeQuests || !completedQuests) return;
+            
+            // Atualizar progresso das missões
+            gameState.quests.active.forEach(quest => {
+                switch(quest.id) {
+                    case 'build5graves':
+                        quest.progress = countGraves();
+                        break;
+                    case 'firstMine':
+                        quest.progress = gameState.cemeteryGrid.filter(cell => cell.type === 'mine').length;
+                        break;
+                    case 'earn1000':
+                        quest.progress = gameState.money;
+                        break;
+                }
+                
+                // Verificar se a missão foi completada
+                if (quest.progress >= quest.target && !quest.completed) {
+                    quest.completed = true;
+                    
+                    // Dar recompensa
+                    gameState.money += quest.reward.money;
+                    gameState.bones += quest.reward.bones;
+                    
+                    // Mover para completadas
+                    gameState.quests.completed.push(quest);
+                    gameState.quests.active = gameState.quests.active.filter(q => q.id !== quest.id);
+                    
+                    showActionFeedback(`Missão concluída: ${quest.name}! Recompensa: 💰${quest.reward.money}, 🦴${quest.reward.bones}`, 'trophy');
+                    addToEventLog(`Missão concluída: ${quest.name}`);
+                    
+                    // Adicionar nova missão
+                    if (quest.id === 'build5graves') {
+                        gameState.quests.active.push({
+                            id: 'build10graves',
+                            name: 'Construtor Avançado',
+                            description: 'Construa 10 túmulos',
+                            target: 10,
+                            progress: countGraves(),
+                            reward: { money: 1000, bones: 20 },
+                            completed: false
+                        });
+                    }
+                }
+            });
+            
+            // Renderizar missões ativas
+            activeQuests.innerHTML = '';
+            gameState.quests.active.forEach(quest => {
+                const progressPercent = Math.min(100, (quest.progress / quest.target) * 100);
+                
+                const questElement = document.createElement('div');
+                questElement.className = 'quest-item';
+                questElement.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-reward">💰${quest.reward.money} 🦴${quest.reward.bones}</div>
+                    </div>
+                    <div class="quest-description">${quest.description}</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Progresso: ${quest.progress}/${quest.target}</span>
+                            <span>${Math.floor(progressPercent)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                activeQuests.appendChild(questElement);
+            });
+            
+            // Renderizar missões completadas
+            completedQuests.innerHTML = '';
+            gameState.quests.completed.forEach(quest => {
+                const questElement = document.createElement('div');
+                questElement.className = 'quest-item';
+                questElement.style.opacity = '0.7';
+                questElement.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-reward"><i class="fas fa-check"></i> Concluída</div>
+                    </div>
+                    <div class="quest-description">${quest.description}</div>
+                `;
+                
+                completedQuests.appendChild(questElement);
+            });
+            
+            // Mostrar dica se não houver missões ativas
+            if (gameState.quests.active.length === 0) {
+                activeQuests.innerHTML = '<p style="text-align: center; color: var(--text-light);">Nenhuma missão ativa no momento. Continue jogando para desbloquear novas missões!</p>';
+            }
+            
+            if (gameState.quests.completed.length === 0) {
+                completedQuests.innerHTML = '<p style="text-align: center; color: var(--text-light);">Nenhuma missão concluída ainda.</p>';
+            }
+        }
+        
+        // Inicializar todas as melhorias quando o jogo carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... (código de inicialização existente) ...
+            
+            // Inicializar melhorias
+            setTimeout(() => {
+                initializeTooltips();
+                initializeHelpSystem();
+                initializeStatistics();
+                initializeQuestSystem();
+                initializeAutoSave();
+                showNewPlayerHints();
+                
+                // Atualizar estados dos botões periodicamente
+                setInterval(updateButtonStates, 1000);
+                
+                // Atualizar estatísticas de jogo
+                if (!gameState.totalMoneyEarned) gameState.totalMoneyEarned = 0;
+                if (!gameState.totalBonesCollected) gameState.totalBonesCollected = 0;
+                if (!gameState.totalTreasuresFound) gameState.totalTreasuresFound = 0;
+                if (!gameState.funeralsHeld) gameState.funeralsHeld = 0;
+                if (!gameState.plansSold) gameState.plansSold = 0;
+                if (!gameState.playTime) gameState.playTime = 0;
+                if (!gameState.totalPrestigeEarned) gameState.totalPrestigeEarned = 0;
+                if (!gameState.totalEmployeesHired) gameState.totalEmployeesHired = 0;
+                
+                // Atualizar tempo de jogo
+                setInterval(() => {
+                    gameState.playTime++;
+                }, 1000);
+            }, 1000);
+        });
+        
+        // Modificar funções existentes para rastrear estatísticas
+        const originalAddToEventLog = addToEventLog;
+        addToEventLog = function(message) {
+            originalAddToEventLog(message);
+            
+            // Rastrear estatísticas baseadas em eventos
+            if (message.includes('+💰') && !message.includes('Vendeu')) {
+                const amount = parseInt(message.match(/\+💰(\d+)/)?.[1] || 0);
+                gameState.totalMoneyEarned += amount;
+            }
+            
+            if (message.includes('+🦴')) {
+                const amount = parseInt(message.match(/\+🦴(\d+)/)?.[1] || 0);
+                gameState.totalBonesCollected += amount;
+            }
+            
+            if (message.includes('Encontrou tesouro') || message.includes('encontrou Diamante')) {
+                gameState.totalTreasuresFound++;
+            }
+            
+            if (message.includes('velório') && message.includes('concluído')) {
+                gameState.funeralsHeld++;
+            }
+            
+            if (message.includes('vendeu um plano')) {
+                gameState.plansSold++;
+            }
+            
+            if (message.includes('Contratou um')) {
+                gameState.totalEmployeesHired++;
+            }
+            
+            if (message.includes('Reiniciou por prestígio')) {
+                const amount = parseInt(message.match(/\+⭐(\d+)/)?.[1] || 0);
+                gameState.totalPrestigeEarned += amount;
+            }
+        };
+        
+        // Atualizar o loop do jogo para incluir as melhorias
+        const originalGameLoop = gameLoop;
+        gameLoop = function() {
+            originalGameLoop();
+            
+            // Atualizar estados dos botões
+            updateButtonStates();
+            
+            // Atualizar missões
+            updateQuests();
+            
+            // Atualizar estatísticas se a aba estiver ativa
+            if (document.querySelector('.tab.active[data-tab="stats"]')) {
+                updateStatistics();
+            }
+        };
+    </script>
 </body>
 </html>
