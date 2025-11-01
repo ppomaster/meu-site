@@ -3,58 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cemitério Tycoon - Melhorado</title>
+    <title>Cemitério Tycoon - Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ... (manter todos os estilos anteriores) ... */
-
-        /* MELHORIA 1: Botões mais intuitivos e acessíveis */
+        :root {
+            --primary: #2c3e50;
+            --primary-dark: #1a252f;
+            --primary-light: #34495e;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --accent: #f39c12;
+            --accent-dark: #e67e22;
+            --success: #27ae60;
+            --success-dark: #219653;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --background: #f5f7fa;
+            --gold: #f1c40f;
+            --silver: #bdc3c7;
+            --bronze: #cd7f32;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 100%;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            --background: #1a1a1a;
+            --light: #2d2d2d;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --primary: #34495e;
+            --primary-dark: #2c3e50;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-center {
+            flex: 1;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .real-time-clock {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            min-width: 140px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .clock-date {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .clock-time {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.dark-mode .stats-bar {
+            background: var(--light);
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        /* Tabs */
+        .tab-container {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.dark-mode .tab-container {
+            background: var(--light);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        body.dark-mode .tab {
+            background: var(--light);
+            color: var(--text);
+        }
+        
+        .tab i {
+            font-size: 1.2rem;
+        }
+        
+        .tab:hover {
+            background: var(--light);
+        }
+        
+        body.dark-mode .tab:hover {
+            background: #3d3d3d;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+        
+        body.dark-mode .tab-content {
+            background: var(--light);
+            color: var(--text);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        body.dark-mode .card {
+            background: var(--light);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+        }
+        
+        .card-description {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            flex-grow: 1;
+            margin-bottom: 10px;
+        }
+        
+        .card-cost {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--light);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--success-dark));
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 4px;
+        }
+        
+        /* Buttons */
         .button {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 0.95rem;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
             text-align: center;
             font-weight: 600;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
         
-        .button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .button:hover::after {
-            left: 100%;
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
         
         .button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
+            transform: translateY(0);
         }
         
         .button-success {
@@ -70,196 +364,26 @@
         }
         
         .button-small {
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            min-height: 40px;
-        }
-        
-        /* MELHORIA 2: Indicadores visuais de estado dos botões */
-        .cost-indicator {
+            padding: 8px 12px;
             font-size: 0.8rem;
-            opacity: 0.9;
-            margin-top: 3px;
         }
         
-        .affordable {
-            color: #2ecc71;
+        /* Cemetery Grid */
+        .cemetery-container {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 10px;
+            margin: 15px 0;
+            overflow: auto;
         }
         
-        .unaffordable {
-            color: #e74c3c;
-        }
-        
-        /* MELHORIA 3: Tooltips para elementos importantes */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--primary-dark);
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .tooltip .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--primary-dark) transparent transparent transparent;
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* MELHORIA 4: Melhor organização visual das abas */
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .tab-section {
-            margin-bottom: 25px;
-        }
-        
-        .tab-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        /* MELHORIA 5: Indicadores de progresso mais visíveis */
-        .progress-container {
-            margin: 12px 0;
-        }
-        
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background-color: var(--light);
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success), var(--success-dark));
-            width: 0%;
-            transition: width 0.5s;
-            border-radius: 5px;
-            position: relative;
-        }
-        
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-image: linear-gradient(
-                -45deg, 
-                rgba(255, 255, 255, 0.2) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255, 255, 255, 0.2) 50%, 
-                rgba(255, 255, 255, 0.2) 75%, 
-                transparent 75%, 
-                transparent
-            );
-            background-size: 20px 20px;
-            animation: move 1s linear infinite;
-        }
-        
-        @keyframes move {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 0; }
-        }
-        
-        /* MELHORIA 6: Melhor feedback visual para ações */
-        .action-feedback {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 2000;
-            font-weight: bold;
-            animation: popIn 0.5s, fadeOut 0.5s 1.5s forwards;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            70% { transform: translate(-50%, -50%) scale(1.1); }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        
-        /* MELHORIA 7: Sistema de dicas contextuais */
-        .context-hint {
-            position: absolute;
-            background: var(--accent);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            cursor: help;
-            top: -5px;
-            right: -5px;
-            z-index: 10;
-            animation: pulse 2s infinite;
-        }
-        
-        /* MELHORIA 8: Melhor organização da grade do cemitério */
         .cemetery-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            gap: 6px;
+            gap: 5px;
             width: 100%;
             min-height: 350px;
-            background: #7f8c8d;
-            padding: 10px;
-            border-radius: 10px;
         }
         
         .grid-cell {
@@ -272,845 +396,3089 @@
             transition: all 0.3s;
             aspect-ratio: 1/1;
             font-size: 1.2rem;
-            position: relative;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         }
         
-        .grid-cell::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.1);
-            border-radius: 8px;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .grid-cell:hover {
+            transform: scale(1.05);
         }
         
-        .grid-cell:hover::before {
-            opacity: 1;
+        .grid-cell.empty {
+            background: #27ae60;
         }
         
-        /* MELHORIA 9: Sistema de notificações persistentes */
-        .notification-panel {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 300px;
-            max-height: 80vh;
+        .grid-cell.grave {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .grid-cell.mine {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .grid-cell.treasure {
+            background: var(--gold);
+            color: black;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Event Log */
+        .event-log {
+            height: 150px;
             overflow-y: auto;
-            z-index: 1500;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: var(--light);
+            padding: 10px;
+            border-radius: 15px;
+            margin: 15px 0;
         }
         
-        .persistent-notification {
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #bdc3c7;
+            font-size: 0.8rem;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        /* Special Events */
+        .special-event {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #9b59b6; }
+            to { box-shadow: 0 0 20px #8e44ad; }
+        }
+        
+        .event-timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        /* Employee Section */
+        .employee-section {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .employee-card {
+            display: flex;
+            align-items: center;
             background: white;
             border-radius: 10px;
             padding: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideInRight 0.3s;
-            border-left: 4px solid var(--primary);
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
-        .persistent-notification.success {
-            border-left-color: var(--success);
+        body.dark-mode .employee-card {
+            background: #3d3d3d;
         }
         
-        .persistent-notification.warning {
-            border-left-color: var(--accent);
+        .employee-icon {
+            font-size: 2rem;
+            margin-right: 15px;
         }
         
-        .persistent-notification.error {
-            border-left-color: var(--secondary);
+        .employee-info {
+            flex-grow: 1;
         }
         
-        .persistent-notification .close {
-            margin-left: auto;
-            cursor: pointer;
-            opacity: 0.7;
+        .employee-name {
+            font-weight: bold;
+            font-size: 1rem;
         }
         
-        .persistent-notification .close:hover {
-            opacity: 1;
+        .employee-description {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 5px;
         }
         
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .employee-count {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 15px;
         }
         
-        /* MELHORIA 10: Sistema de ajuda integrado */
-        .help-button {
+        /* Bottom Navigation */
+        .bottom-nav {
             position: fixed;
-            bottom: 90px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
+            padding: 10px 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             z-index: 100;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        body.dark-mode .bottom-nav {
+            background: var(--light);
+        }
+        
+        .nav-button {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 5px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 0.7rem;
+            cursor: pointer;
             transition: all 0.3s;
         }
         
-        .help-button:hover {
-            transform: scale(1.1);
-            background: var(--primary-dark);
+        .nav-button i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
         }
         
-        .help-panel {
-            position: fixed;
-            bottom: 160px;
-            right: 20px;
-            width: 300px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 100;
-            padding: 20px;
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-        
-        .help-panel.active {
-            display: block;
-        }
-        
-        .help-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+        .nav-button.active {
             color: var(--primary);
         }
         
-        .help-content {
+        .nav-button:hover {
+            color: var(--primary);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        /* Floating Ghost */
+        .floating-ghost {
+            position: fixed;
+            font-size: 3rem;
+            cursor: pointer;
+            z-index: 1000;
+            animation: float 3s infinite ease-in-out;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Floating Text */
+        .floating-text {
+            position: fixed;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 1001;
+            pointer-events: none;
+            animation: floatUp 1.5s forwards;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+        
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .achievement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        body.dark-mode .achievement-card {
+            background: var(--light);
+        }
+        
+        .achievement-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+        }
+        
+        .achievement-info {
+            flex-grow: 1;
+        }
+        
+        .achievement-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-description {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .achievement-progress {
+            height: 6px;
+            background: var(--light);
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .achievement-progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .achievement-locked {
+            opacity: 0.5;
+        }
+        
+        /* Prestige */
+        .prestige-card {
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .prestige-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .prestige-description {
+            margin-bottom: 15px;
+        }
+        
+        /* Shop */
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .shop-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        body.dark-mode .shop-item {
+            background: var(--light);
+        }
+        
+        .shop-item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .shop-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .shop-item-description {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        
+        /* Research */
+        .research-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .research-tier {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .research-node {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        body.dark-mode .research-node {
+            background: var(--light);
+        }
+        
+        .research-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .research-node.unlocked {
+            background: var(--success);
+            color: white;
+        }
+        
+        .research-node.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .research-node-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Quests */
+        .quests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .quest-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.dark-mode .quest-item {
+            background: var(--light);
+        }
+        
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .quest-name {
+            font-weight: bold;
+        }
+        
+        .quest-reward {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .quest-progress {
+            height: 8px;
+            background: var(--light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .quest-progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        /* Daily Bonus */
+        .daily-bonus {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .daily-bonus-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .daily-bonus-description {
+            margin-bottom: 15px;
+        }
+        
+        .daily-bonus-streak {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .streak-day {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .streak-day.active {
+            background: white;
+            color: var(--accent);
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        body.dark-mode .stat-card {
+            background: var(--light);
+        }
+        
+        .stat-card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card-label {
             font-size: 0.9rem;
-            line-height: 1.5;
-            color: var(--text);
+            color: var(--text-light);
         }
         
-        /* Responsividade melhorada */
-        @media (max-width: 768px) {
+        /* Responsive */
+        @media (min-width: 768px) {
             .container {
-                padding: 10px;
+                max-width: 750px;
             }
             
             .card-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 8px;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
             
             .cemetery-grid {
-                grid-template-columns: repeat(6, 1fr);
-                grid-template-rows: repeat(6, 1fr);
-                min-height: 300px;
-            }
-            
-            .button {
-                min-height: 44px;
-                font-size: 0.9rem;
-            }
-            
-            .notification-panel {
-                width: 250px;
-            }
-            
-            .help-panel {
-                width: 250px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .tab {
-                padding: 10px 3px;
-                font-size: 0.8rem;
-            }
-            
-            .tab i {
-                font-size: 1rem;
-            }
-            
-            .card-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .cemetery-grid {
-                grid-template-columns: repeat(5, 1fr);
-                grid-template-rows: repeat(5, 1fr);
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: repeat(10, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <!-- ... (manter a estrutura HTML anterior) ... -->
-    
-    <!-- MELHORIA 10: Painel de ajuda -->
-    <button class="help-button" id="help-button">
-        <i class="fas fa-question"></i>
-    </button>
-    
-    <div class="help-panel" id="help-panel">
-        <div class="help-title" id="help-title">Ajuda do Cemitério Tycoon</div>
-        <div class="help-content" id="help-content">
-            <!-- Conteúdo será preenchido dinamicamente -->
+    <div class="container">
+        <!-- Tela de Início -->
+        <div id="start-screen" class="screen active">
+            <header>
+                <div class="real-time-clock" id="real-time-clock">
+                    <div class="clock-date" id="clock-date"></div>
+                    <div class="clock-time" id="clock-time"></div>
+                </div>
+                <div class="header-center">
+                    <h1><i class="fas fa-ghost"></i> Cemitério Tycoon</h1>
+                    <p class="subtitle">Gerencie seu império funerário e descubra tesouros ocultos!</p>
+                </div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </header>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">⚰️</div>
+                <h2>Bem-vindo ao Cemitério Tycoon</h2>
+                <p style="margin: 20px 0;">Construa um império funerário, realize velórios, venda planos e explore minas para encontrar tesouros valiosos!</p>
+                
+                <button id="start-button" class="button button-success" style="margin-top: 20px;">
+                    <i class="fas fa-play"></i> Iniciar Novo Jogo
+                </button>
+                <button id="load-button" class="button" style="margin-top: 10px;">
+                    <i class="fas fa-folder-open"></i> Carregar Jogo
+                </button>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <div class="section-header">
+                    <div class="section-title">Como Jogar</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Velórios</div>
+                            <div class="card-icon">⚰️</div>
+                        </div>
+                        <div class="card-description">Realize cerimônias fúnebres para ganhar dinheiro</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Planos Funerários</div>
+                            <div class="card-icon">📄</div>
+                        </div>
+                        <div class="card-description">Venda planos para gerar renda passiva</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Mineração</div>
+                            <div class="card-icon">⛏️</div>
+                        </div>
+                        <div class="card-description">Explore minas para encontrar ossos e tesouros</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Funcionários</div>
+                            <div class="card-icon">👥</div>
+                        </div>
+                        <div class="card-description">Contrate funcionários para automatizar tarefas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tela de Nome do Cemitério -->
+        <div id="name-screen" class="screen">
+            <header>
+                <div class="real-time-clock" id="name-clock">
+                    <div class="clock-date" id="name-date"></div>
+                    <div class="clock-time" id="name-time"></div>
+                </div>
+                <div class="header-center">
+                    <h1><i class="fas fa-ghost"></i> Cemitério Tycoon</h1>
+                    <p class="subtitle">Dê um nome ao seu cemitério</p>
+                </div>
+                <button class="theme-toggle" id="name-theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </header>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🏛️</div>
+                <h2>Nomeie Seu Cemitério</h2>
+                <p style="margin: 20px 0;">Escolha um nome memorável para o seu império funerário</p>
+                
+                <div class="form-group" style="max-width: 400px; margin: 0 auto;">
+                    <input type="text" id="cemetery-name" class="form-input" placeholder="Ex: Cemitério da Paz" maxlength="30">
+                </div>
+                
+                <button id="confirm-name-button" class="button button-success" style="margin-top: 20px;">
+                    <i class="fas fa-check"></i> Confirmar Nome
+                </button>
+                <button id="back-to-start-button" class="button" style="margin-top: 10px;">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tela Principal do Jogo -->
+        <div id="game-screen" class="screen">
+            <header>
+                <div class="real-time-clock" id="game-clock">
+                    <div class="clock-date" id="game-date"></div>
+                    <div class="clock-time" id="game-time"></div>
+                </div>
+                <div class="header-center">
+                    <h1><i class="fas fa-ghost"></i> <span id="cemetery-name-display">Cemitério Tycoon</span></h1>
+                    <p class="subtitle" id="prestige-info">Multiplicador: 1.0x | Dia: 1</p>
+                </div>
+                <button class="theme-toggle" id="game-theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </header>
+            
+            <!-- Evento Especial -->
+            <div id="special-event" class="special-event" style="display: none;">
+                <h3 id="event-title">Evento Especial!</h3>
+                <p id="event-description">Um evento especial está ocorrendo!</p>
+                <div class="event-timer" id="event-timer">10:00</div>
+                <p id="event-effect"></p>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" id="money-stat">1000</div>
+                    <div class="stat-label">Dinheiro</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon">🦴</div>
+                    <div class="stat-value" id="bones-stat">0</div>
+                    <div class="stat-label">Ossos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-value" id="treasure-stat">0</div>
+                    <div class="stat-label">Tesouros</div>
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-icon">⚰️</div>
+                    <div class="stat-value" id="coffins-stat">5</div>
+                    <div class="stat-label">Caixões</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="employees-stat">0</div>
+                    <div class="stat-label">Funcionários</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value" id="prestige-stat">0</div>
+                    <div class="stat-label">Prestígio</div>
+                </div>
+            </div>
+            
+            <div class="tab-container">
+                <div class="tab active" data-tab="cemetery">
+                    <i class="fas fa-monument"></i>
+                    <span>Cemitério</span>
+                </div>
+                <div class="tab" data-tab="funeral">
+                    <i class="fas fa-church"></i>
+                    <span>Velórios</span>
+                </div>
+                <div class="tab" data-tab="mining">
+                    <i class="fas fa-mountain"></i>
+                    <span>Mineração</span>
+                </div>
+                <div class="tab" data-tab="employees">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </div>
+                <div class="tab" data-tab="prestige">
+                    <i class="fas fa-star"></i>
+                    <span>Prestígio</span>
+                </div>
+                <div class="tab" data-tab="achievements">
+                    <i class="fas fa-trophy"></i>
+                    <span>Conquistas</span>
+                </div>
+            </div>
+            
+            <!-- Aba do Cemitério -->
+            <div id="cemetery-tab" class="tab-content active">
+                <div class="section-header">
+                    <div class="section-title">Seu Cemitério</div>
+                    <div class="section-actions">
+                        <button class="button button-small" id="expand-button">Expandir (💰2000)</button>
+                        <button class="button button-small button-success" id="save-button">
+                            <i class="fas fa-save"></i> Salvar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="cemetery-container">
+                    <div class="cemetery-grid" id="cemetery-grid">
+                        <!-- Grade do cemitério será gerada dinamicamente -->
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Construções</div>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Túmulo Básico</div>
+                            <div class="card-icon">⚰️</div>
+                        </div>
+                        <div class="card-description">Gera renda passiva constante</div>
+                        <div class="card-cost">💰100</div>
+                        <button class="button button-small" id="build-grave-button">Construir</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Mina Básica</div>
+                            <div class="card-icon">⛏️</div>
+                        </div>
+                        <div class="card-description">Produz ossos e ocasionalmente tesouros</div>
+                        <div class="card-cost">💰500</div>
+                        <button class="button button-small button-warning" id="build-mine-button">Construir</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Mausoléu</div>
+                            <div class="card-icon">🏛️</div>
+                        </div>
+                        <div class="card-description">Gera renda passiva premium</div>
+                        <div class="card-cost">💰1500</div>
+                        <button class="button button-small button-success" id="build-mausoleum-button">Construir</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Capela</div>
+                            <div class="card-icon">⛪</div>
+                        </div>
+                        <div class="card-description">Aumenta eficiência de velórios</div>
+                        <div class="card-cost">💰2000</div>
+                        <button class="button button-small button-success" id="build-chapel-button">Construir</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Decorações</div>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Estatueta</div>
+                            <div class="card-icon">🗿</div>
+                        </div>
+                        <div class="card-description">Aumenta atratividade do cemitério</div>
+                        <div class="card-cost">💰300</div>
+                        <button class="button button-small" id="build-statue-button">Colocar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Lápide Ornamentada</div>
+                            <div class="card-icon">🪦</div>
+                        </div>
+                        <div class="card-description">Aumenta valor dos túmulos</div>
+                        <div class="card-cost">💰400</div>
+                        <button class="button button-small" id="build-ornate-tombstone-button">Colocar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Jardim</div>
+                            <div class="card-icon">🌷</div>
+                        </div>
+                        <div class="card-description">Aumenta felicidade dos visitantes</div>
+                        <div class="card-cost">💰600</div>
+                        <button class="button button-small button-success" id="build-garden-button">Plantar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Fonte</div>
+                            <div class="card-icon">⛲</div>
+                        </div>
+                        <div class="card-description">Aumenta prestígio do cemitério</div>
+                        <div class="card-cost">💰1200</div>
+                        <button class="button button-small button-success" id="build-fountain-button">Construir</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Velórios -->
+            <div id="funeral-tab" class="tab-content">
+                <div class="section-header">
+                    <div class="section-title">Velórios e Planos Funerários</div>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Velório Básico</div>
+                            <div class="card-icon">⚰️</div>
+                        </div>
+                        <div class="card-description">Cerimônia fúnebre simples</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="basic-funeral-progress"></div>
+                        </div>
+                        <div class="card-cost">💰200</div>
+                        <button class="button button-small" id="basic-funeral-button">Realizar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Velório Premium</div>
+                            <div class="card-icon">🏛️</div>
+                        </div>
+                        <div class="card-description">Cerimônia de luxo com maior rendimento</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="premium-funeral-progress"></div>
+                        </div>
+                        <div class="card-cost">💰500</div>
+                        <button class="button button-small button-warning" id="premium-funeral-button">Realizar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Plano Básico</div>
+                            <div class="card-icon">📄</div>
+                        </div>
+                        <div class="card-description">Venda de planos funerários básicos</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="basic-plan-progress"></div>
+                        </div>
+                        <div class="card-cost">💰150</div>
+                        <button class="button button-small" id="basic-plan-button">Vender</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Plano Premium</div>
+                            <div class="card-icon">📜</div>
+                        </div>
+                        <div class="card-description">Venda de planos funerários premium</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="premium-plan-progress"></div>
+                        </div>
+                        <div class="card-cost">💰400</div>
+                        <button class="button button-small button-warning" id="premium-plan-button">Vender</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Renda Passiva</div>
+                    <div class="section-actions">
+                        <span id="passive-income">0</span> 💰/seg
+                    </div>
+                </div>
+                
+                <!-- Bônus Diário -->
+                <div class="daily-bonus" id="daily-bonus">
+                    <div class="daily-bonus-title">Bônus Diário</div>
+                    <div class="daily-bonus-description">Volte todos os dias para receber recompensas especiais!</div>
+                    <button class="button button-warning" id="claim-daily-bonus-button">Resgatar Bônus de Hoje</button>
+                    <div class="daily-bonus-streak" id="daily-streak">
+                        <!-- Dias da semana serão preenchidos dinamicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Mineração -->
+            <div id="mining-tab" class="tab-content">
+                <div class="section-header">
+                    <div class="section-title">Mineração e Exploração</div>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Picareta Básica</div>
+                            <div class="card-icon">⛏️</div>
+                        </div>
+                        <div class="card-description">Cave para encontrar recursos</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="basic-pickaxe-progress"></div>
+                        </div>
+                        <div class="card-cost">💰20</div>
+                        <button class="button button-small" id="basic-pickaxe-button">Cavar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Picareta Aprimorada</div>
+                            <div class="card-icon">🛠️</div>
+                        </div>
+                        <div class="card-description">Maior chance de encontrar tesouros</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="improved-pickaxe-progress"></div>
+                        </div>
+                        <div class="card-cost">💰100</div>
+                        <button class="button button-small button-warning" id="improved-pickaxe-button">Cavar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Mineração Profunda</div>
+                            <div class="card-icon">🕳️</div>
+                        </div>
+                        <div class="card-description">Encontre tesouros raros</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="deep-mining-progress"></div>
+                        </div>
+                        <div class="card-cost">💰200</div>
+                        <button class="button button-small button-warning" id="deep-mining-button">Minerar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Vender Recursos</div>
+                            <div class="card-icon">💰</div>
+                        </div>
+                        <div class="card-description">Venda ossos e tesouros por dinheiro</div>
+                        <div class="card-cost" id="resources-count">Ossos: 0, Tesouros: 0</div>
+                        <button class="button button-small" id="sell-resources-button">Vender Tudo</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Expedições</div>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Expedição Curta</div>
+                            <div class="card-icon">🧭</div>
+                        </div>
+                        <div class="card-description">Envie uma equipe para uma expedição rápida</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="short-expedition-progress"></div>
+                        </div>
+                        <div class="card-cost">💰500</div>
+                        <button class="button button-small" id="short-expedition-button">Iniciar Expedição</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Expedição Longa</div>
+                            <div class="card-icon">🗺️</div>
+                        </div>
+                        <div class="card-description">Envie uma equipe para uma expedição longa</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="long-expedition-progress"></div>
+                        </div>
+                        <div class="card-cost">💰1500</div>
+                        <button class="button button-small button-warning" id="long-expedition-button">Iniciar Expedição</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Funcionários -->
+            <div id="employees-tab" class="tab-content">
+                <div class="section-header">
+                    <div class="section-title">Contrate Funcionários</div>
+                </div>
+                
+                <div class="employee-section">
+                    <div class="employee-card">
+                        <div class="employee-icon">👷</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Coveiro</div>
+                            <div class="employee-description">Constrói túmulos automaticamente quando há espaço disponível</div>
+                        </div>
+                        <div class="employee-count" id="digger-count">0</div>
+                        <button class="button button-small" id="hire-digger-button">Contratar (💰<span id="digger-cost">500</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">🎭</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Organizador de Velórios</div>
+                            <div class="employee-description">Realiza velórios básicos automaticamente quando possível</div>
+                        </div>
+                        <div class="employee-count" id="organizer-count">0</div>
+                        <button class="button button-small" id="hire-organizer-button">Contratar (💰<span id="organizer-cost">800</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">💼</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Vendedor</div>
+                            <div class="employee-description">Vende planos funerários automaticamente</div>
+                        </div>
+                        <div class="employee-count" id="salesman-count">0</div>
+                        <button class="button button-small" id="hire-salesman-button">Contratar (💰<span id="salesman-cost">600</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">⛏️</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Minerador</div>
+                            <div class="employee-description">Realiza mineração básica automaticamente</div>
+                        </div>
+                        <div class="employee-count" id="miner-count">0</div>
+                        <button class="button button-small" id="hire-miner-button">Contratar (💰<span id="miner-cost">1000</span>)</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Funcionários Especializados</div>
+                </div>
+                
+                <div class="employee-section">
+                    <div class="employee-card">
+                        <div class="employee-icon">🌿</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Jardineiro</div>
+                            <div class="employee-description">Aumenta a atratividade do cemitério, gerando renda passiva extra</div>
+                        </div>
+                        <div class="employee-count" id="gardener-count">0</div>
+                        <button class="button button-small button-success" id="hire-gardener-button">Contratar (💰<span id="gardener-cost">1200</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">👮</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Segurança</div>
+                            <div class="employee-description">Reduz eventos negativos e aumenta a satisfação dos clientes</div>
+                        </div>
+                        <div class="employee-count" id="security-count">0</div>
+                        <button class="button button-small button-success" id="hire-security-button">Contratar (💰<span id="security-cost">1500</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">💐</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Florista</div>
+                            <div class="employee-description">Vende flores para visitantes, gerando renda extra</div>
+                        </div>
+                        <div class="employee-count" id="florist-count">0</div>
+                        <button class="button button-small button-success" id="hire-florist-button">Contratar (💰<span id="florist-cost">900</span>)</button>
+                    </div>
+                    
+                    <div class="employee-card">
+                        <div class="employee-icon">👔</div>
+                        <div class="employee-info">
+                            <div class="employee-name">Gerente</div>
+                            <div class="employee-description">Aumenta a eficiência de todos os funcionários em 15%</div>
+                        </div>
+                        <div class="employee-count" id="manager-count">0</div>
+                        <button class="button button-small button-warning" id="hire-manager-button">Contratar (💰<span id="manager-cost">3000</span>)</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Efeitos dos Funcionários</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Resumo de Automação</div>
+                        <div class="card-icon">⚙️</div>
+                    </div>
+                    <div class="card-description">
+                        Seus funcionários estão trabalhando automaticamente! Eles realizam ações conforme disponibilidade de recursos.
+                    </div>
+                    <div id="automation-status">
+                        <!-- Status da automação será preenchido aqui -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba de Prestígio -->
+            <div id="prestige-tab" class="tab-content">
+                <div class="prestige-card">
+                    <div class="prestige-title">Sistema de Prestígio</div>
+                    <div class="prestige-description">Reinicie seu progresso para ganhar Pontos de Prestígio e desbloquear melhorias permanentes!</div>
+                    <button class="button button-warning" id="prestige-button">Reiniciar por Prestígio</button>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Melhorias de Prestígio</div>
+                </div>
+                
+                <div class="shop-items">
+                    <div class="shop-item">
+                        <div class="shop-item-icon">💰</div>
+                        <div class="shop-item-name">Renda Inicial</div>
+                        <div class="shop-item-description">Comece com mais dinheiro</div>
+                        <div class="card-cost">⭐5</div>
+                        <button class="button button-small" id="buy-initial-money-upgrade">Comprar</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-icon">⚡</div>
+                        <div class="shop-item-name">Velocidade de Produção</div>
+                        <div class="shop-item-description">Aumenta a velocidade de todas as produções</div>
+                        <div class="card-cost">⭐10</div>
+                        <button class="button button-small" id="buy-production-speed-upgrade">Comprar</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-icon">📈</div>
+                        <div class="shop-item-name">Multiplicador de Ganhos</div>
+                        <div class="shop-item-description">Aumenta todos os ganhos em 10%</div>
+                        <div class="card-cost">⭐15</div>
+                        <button class="button button-small" id="buy-earnings-multiplier-upgrade">Comprar</button>
+                    </div>
+                    
+                    <div class="shop-item">
+                        <div class="shop-item-icon">👥</div>
+                        <div class="shop-item-name">Capacidade de Funcionários</div>
+                        <div class="shop-item-description">Aumenta o limite de funcionários</div>
+                        <div class="card-cost">⭐20</div>
+                        <button class="button button-small" id="buy-employee-capacity-upgrade">Comprar</button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Árvore de Pesquisa</div>
+                </div>
+                
+                <div class="research-tree" id="research-tree">
+                    <!-- Árvore de pesquisa será preenchida dinamicamente -->
+                </div>
+            </div>
+            
+            <!-- Aba de Conquistas -->
+            <div id="achievements-tab" class="tab-content">
+                <div class="section-header">
+                    <div class="section-title">Conquistas</div>
+                </div>
+                
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Conquistas serão preenchidas dinamicamente -->
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">Missões Diárias</div>
+                </div>
+                
+                <div class="quests-list" id="daily-quests">
+                    <!-- Missões diárias serão preenchidas dinamicamente -->
+                </div>
+            </div>
+            
+            <div class="event-log">
+                <div class="section-header">
+                    <div class="section-title">Log de Eventos</div>
+                </div>
+                <div id="event-log-content">
+                    <!-- Log de eventos será preenchido dinamicamente -->
+                </div>
+            </div>
         </div>
     </div>
-    
-    <!-- MELHORIA 9: Painel de notificações persistentes -->
-    <div class="notification-panel" id="notification-panel">
-        <!-- Notificações serão adicionadas aqui -->
+
+    <!-- Barra de Navegação Inferior -->
+    <div class="bottom-nav">
+        <button class="nav-button" data-tab="cemetery">
+            <i class="fas fa-monument"></i>
+            <span>Cemitério</span>
+        </button>
+        <button class="nav-button" data-tab="funeral">
+            <i class="fas fa-church"></i>
+            <span>Velórios</span>
+        </button>
+        <button class="nav-button" data-tab="mining">
+            <i class="fas fa-mountain"></i>
+            <span>Mineração</span>
+        </button>
+        <button class="nav-button" data-tab="employees">
+            <i class="fas fa-users"></i>
+            <span>Funcionários</span>
+        </button>
+        <button class="nav-button" data-tab="prestige">
+            <i class="fas fa-star"></i>
+            <span>Prestígio</span>
+        </button>
     </div>
 
     <script>
-        // ... (manter todo o código JavaScript anterior) ...
-        
-        // MELHORIA 1: Sistema de verificação de acessibilidade dos botões
-        function updateButtonStates() {
-            // Verificar todos os botões de construção
-            const buildButtons = [
-                { id: 'build-grave-button', cost: 100 },
-                { id: 'build-mine-button', cost: 500 },
-                { id: 'build-mausoleum-button', cost: 1500 },
-                { id: 'build-chapel-button', cost: 2000 },
-                { id: 'build-statue-button', cost: 300 },
-                { id: 'build-ornate-tombstone-button', cost: 400 },
-                { id: 'build-garden-button', cost: 600 },
-                { id: 'build-fountain-button', cost: 1200 },
-                { id: 'expand-button', cost: 2000 }
-            ];
+        // Estado do jogo
+        const gameState = {
+            cemeteryName: "Cemitério Tycoon",
+            money: 1000,
+            bones: 0,
+            treasures: 0,
+            coffins: 5,
+            employees: 0,
+            prestigePoints: 0,
+            prestigeMultiplier: 1,
+            day: 1,
             
-            buildButtons.forEach(button => {
-                const element = document.getElementById(button.id);
-                if (element) {
-                    const canAfford = gameState.money >= button.cost;
-                    const hasSpace = button.id === 'expand-button' || 
-                                    gameState.cemeteryGrid.some(cell => cell.type === 'empty');
-                    
-                    element.disabled = !canAfford || !hasSpace;
-                    
-                    // Atualizar indicador visual
-                    const costIndicator = element.querySelector('.cost-indicator') || 
-                                         document.createElement('div');
-                    if (!element.contains(costIndicator)) {
-                        costIndicator.className = 'cost-indicator';
-                        element.appendChild(costIndicator);
-                    }
-                    
-                    costIndicator.textContent = canAfford ? 'Pode comprar' : 'Dinheiro insuficiente';
-                    costIndicator.className = `cost-indicator ${canAfford ? 'affordable' : 'unaffordable'}`;
-                    
-                    // Adicionar tooltip se não houver espaço
-                    if (!hasSpace && button.id !== 'expand-button') {
-                        element.title = 'Não há espaço vazio no cemitério!';
-                    } else {
-                        element.title = '';
-                    }
+            // Cemitério
+            cemeterySize: 8,
+            cemeteryGrid: [],
+            
+            // Velórios
+            basicFuneralProgress: 0,
+            premiumFuneralProgress: 0,
+            basicPlanProgress: 0,
+            premiumPlanProgress: 0,
+            passiveIncome: 0,
+            
+            // Mineração
+            basicPickaxeProgress: 0,
+            improvedPickaxeProgress: 0,
+            deepMiningProgress: 0,
+            treasuresCollection: [],
+            
+            // Expeditions
+            shortExpeditionProgress: 0,
+            longExpeditionProgress: 0,
+            
+            // Funcionários
+            hiredEmployees: {
+                digger: 0,
+                organizer: 0,
+                salesman: 0,
+                miner: 0,
+                gardener: 0,
+                security: 0,
+                florist: 0,
+                manager: 0
+            },
+            employeeCosts: {
+                digger: 500,
+                organizer: 800,
+                salesman: 600,
+                miner: 1000,
+                gardener: 1200,
+                security: 1500,
+                florist: 900,
+                manager: 3000
+            },
+            
+            // Eventos especiais
+            specialEvent: {
+                active: false,
+                type: null,
+                endTime: 0,
+                multiplier: 1
+            },
+            
+            // Sistema de conquistas
+            achievements: {
+                firstGrave: { unlocked: false, progress: 0, target: 1 },
+                tenGraves: { unlocked: false, progress: 0, target: 10 },
+                firstMine: { unlocked: false, progress: 0, target: 1 },
+                firstTreasure: { unlocked: false, progress: 0, target: 1 },
+                firstEmployee: { unlocked: false, progress: 0, target: 1 },
+                moneyMaker: { unlocked: false, progress: 0, target: 10000 },
+                boneCollector: { unlocked: false, progress: 0, target: 100 },
+                treasureHunter: { unlocked: false, progress: 0, target: 10 }
+            },
+            
+            // Missões diárias
+            dailyQuests: {},
+            
+            // Bônus diário
+            lastDailyBonus: null,
+            dailyBonusStreak: 0,
+            
+            // Sistema de prestígio
+            prestigeUpgrades: {
+                initialMoney: 0,
+                productionSpeed: 0,
+                earningsMultiplier: 0,
+                employeeCapacity: 0
+            },
+            
+            // Pesquisa
+            research: {
+                advancedMining: false,
+                efficientFunerals: false,
+                automatedSales: false,
+                cemeteryExpansion: false
+            },
+            
+            // Configurações
+            darkMode: false,
+            
+            // Fantasma flutuante
+            floatingGhost: {
+                active: false,
+                element: null,
+                timeout: null
+            }
+        };
+
+        // Inicialização do jogo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar event listeners
+            document.getElementById('start-button').addEventListener('click', showNameScreen);
+            document.getElementById('load-button').addEventListener('click', loadGame);
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('name-theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('game-theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('confirm-name-button').addEventListener('click', confirmCemeteryName);
+            document.getElementById('back-to-start-button').addEventListener('click', showStartScreen);
+            document.getElementById('save-button').addEventListener('click', saveGame);
+            
+            // Navegação por tabs
+            document.querySelectorAll('.tab, .nav-button').forEach(tab => {
+                if (tab.getAttribute('data-tab')) {
+                    tab.addEventListener('click', function() {
+                        const tabId = this.getAttribute('data-tab');
+                        switchTab(tabId);
+                        
+                        // Atualizar estado dos botões de navegação
+                        document.querySelectorAll('.nav-button').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
                 }
             });
             
-            // Verificar botões de ações
-            const actionButtons = [
-                { id: 'basic-funeral-button', cost: 200, requires: 'coffins', amount: 1 },
-                { id: 'premium-funeral-button', cost: 500, requires: 'coffins', amount: 1 },
-                { id: 'basic-plan-button', cost: 150 },
-                { id: 'premium-plan-button', cost: 400 },
-                { id: 'basic-pickaxe-button', cost: 20 },
-                { id: 'improved-pickaxe-button', cost: 100 },
-                { id: 'deep-mining-button', cost: 200 },
-                { id: 'short-expedition-button', cost: 500 },
-                { id: 'long-expedition-button', cost: 1500 }
-            ];
+            // Ações do cemitério
+            document.getElementById('build-grave-button').addEventListener('click', buildGrave);
+            document.getElementById('build-mine-button').addEventListener('click', buildMine);
+            document.getElementById('build-mausoleum-button').addEventListener('click', buildMausoleum);
+            document.getElementById('build-chapel-button').addEventListener('click', buildChapel);
+            document.getElementById('build-statue-button').addEventListener('click', buildStatue);
+            document.getElementById('build-ornate-tombstone-button').addEventListener('click', buildOrnateTombstone);
+            document.getElementById('build-garden-button').addEventListener('click', buildGarden);
+            document.getElementById('build-fountain-button').addEventListener('click', buildFountain);
+            document.getElementById('expand-button').addEventListener('click', expandCemetery);
             
-            actionButtons.forEach(button => {
-                const element = document.getElementById(button.id);
-                if (element) {
-                    const canAfford = gameState.money >= button.cost;
-                    let hasRequirements = true;
-                    
-                    if (button.requires) {
-                        hasRequirements = gameState[button.requires] >= button.amount;
-                    }
-                    
-                    element.disabled = !canAfford || !hasRequirements;
-                    
-                    // Atualizar indicador visual
-                    const costIndicator = element.querySelector('.cost-indicator') || 
-                                         document.createElement('div');
-                    if (!element.contains(costIndicator)) {
-                        costIndicator.className = 'cost-indicator';
-                        element.appendChild(costIndicator);
-                    }
-                    
-                    if (!canAfford) {
-                        costIndicator.textContent = 'Dinheiro insuficiente';
-                        costIndicator.className = 'cost-indicator unaffordable';
-                    } else if (!hasRequirements) {
-                        costIndicator.textContent = button.requires === 'coffins' ? 'Caixões insuficientes' : 'Recursos insuficientes';
-                        costIndicator.className = 'cost-indicator unaffordable';
-                    } else {
-                        costIndicator.textContent = 'Pode realizar';
-                        costIndicator.className = 'cost-indicator affordable';
-                    }
+            // Velórios
+            document.getElementById('basic-funeral-button').addEventListener('click', startBasicFuneral);
+            document.getElementById('premium-funeral-button').addEventListener('click', startPremiumFuneral);
+            document.getElementById('basic-plan-button').addEventListener('click', sellBasicPlan);
+            document.getElementById('premium-plan-button').addEventListener('click', sellPremiumPlan);
+            document.getElementById('claim-daily-bonus-button').addEventListener('click', claimDailyBonus);
+            
+            // Mineração
+            document.getElementById('basic-pickaxe-button').addEventListener('click', startBasicPickaxe);
+            document.getElementById('improved-pickaxe-button').addEventListener('click', startImprovedPickaxe);
+            document.getElementById('deep-mining-button').addEventListener('click', startDeepMining);
+            document.getElementById('sell-resources-button').addEventListener('click', sellResources);
+            document.getElementById('short-expedition-button').addEventListener('click', startShortExpedition);
+            document.getElementById('long-expedition-button').addEventListener('click', startLongExpedition);
+            
+            // Funcionários
+            document.getElementById('hire-digger-button').addEventListener('click', () => hireEmployee('digger'));
+            document.getElementById('hire-organizer-button').addEventListener('click', () => hireEmployee('organizer'));
+            document.getElementById('hire-salesman-button').addEventListener('click', () => hireEmployee('salesman'));
+            document.getElementById('hire-miner-button').addEventListener('click', () => hireEmployee('miner'));
+            document.getElementById('hire-gardener-button').addEventListener('click', () => hireEmployee('gardener'));
+            document.getElementById('hire-security-button').addEventListener('click', () => hireEmployee('security'));
+            document.getElementById('hire-florist-button').addEventListener('click', () => hireEmployee('florist'));
+            document.getElementById('hire-manager-button').addEventListener('click', () => hireEmployee('manager'));
+            
+            // Prestígio
+            document.getElementById('prestige-button').addEventListener('click', prestigeReset);
+            document.getElementById('buy-initial-money-upgrade').addEventListener('click', () => buyPrestigeUpgrade('initialMoney'));
+            document.getElementById('buy-production-speed-upgrade').addEventListener('click', () => buyPrestigeUpgrade('productionSpeed'));
+            document.getElementById('buy-earnings-multiplier-upgrade').addEventListener('click', () => buyPrestigeUpgrade('earningsMultiplier'));
+            document.getElementById('buy-employee-capacity-upgrade').addEventListener('click', () => buyPrestigeUpgrade('employeeCapacity'));
+            
+            // Inicializar grade do cemitério
+            initializeCemetery();
+            
+            // Iniciar relógio em tempo real
+            startRealTimeClock();
+            
+            // Inicializar conquistas
+            initializeAchievements();
+            
+            // Inicializar sistema de bônus diário
+            initializeDailyBonus();
+            
+            // Inicializar árvore de pesquisa
+            initializeResearchTree();
+            
+            // Iniciar sistema de fantasma flutuante
+            startFloatingGhost();
+            
+            // Iniciar sistema de texto flutuante
+            setupFloatingText();
+            
+            // Carregar jogo salvo, se existir
+            loadGame();
+            
+            // Iniciar loop do jogo
+            setInterval(gameLoop, 1000);
+            
+            // Iniciar eventos especiais
+            setInterval(checkSpecialEvents, 30000); // Verificar a cada 30 segundos
+            
+            // Atualizar display inicial
+            updateDisplay();
+        });
+
+        // Mostrar tela de nome do cemitério
+        function showNameScreen() {
+            showScreen('name-screen');
+        }
+
+        // Mostrar tela inicial
+        function showStartScreen() {
+            showScreen('start-screen');
+        }
+
+        // Confirmar nome do cemitério
+        function confirmCemeteryName() {
+            const nameInput = document.getElementById('cemetery-name');
+            const name = nameInput.value.trim();
+            
+            if (name === '') {
+                showNotification('Por favor, digite um nome para o cemitério!', 'error');
+                return;
+            }
+            
+            gameState.cemeteryName = name;
+            startNewGame();
+        }
+
+        // Relógio em tempo real
+        function startRealTimeClock() {
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('pt-BR');
+                const dateString = now.toLocaleDateString('pt-BR');
+                
+                // Atualizar todos os relógios
+                document.querySelectorAll('.clock-date').forEach(el => {
+                    el.textContent = dateString;
+                });
+                
+                document.querySelectorAll('.clock-time').forEach(el => {
+                    el.textContent = timeString;
+                });
+            }
+            
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // Alternar tema claro/escuro
+        function toggleTheme() {
+            gameState.darkMode = !gameState.darkMode;
+            document.body.classList.toggle('dark-mode', gameState.darkMode);
+            
+            const themeIcons = document.querySelectorAll('.theme-toggle i');
+            themeIcons.forEach(icon => {
+                if (gameState.darkMode) {
+                    icon.className = 'fas fa-sun';
+                } else {
+                    icon.className = 'fas fa-moon';
                 }
+            });
+            
+            saveGame();
+        }
+
+        // Inicializar o cemitério
+        function initializeCemetery() {
+            const grid = document.getElementById('cemetery-grid');
+            grid.innerHTML = '';
+            
+            // Configurar grade
+            grid.style.gridTemplateColumns = `repeat(${gameState.cemeterySize}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${gameState.cemeterySize}, 1fr)`;
+            
+            // Inicializar array do cemitério se não existir
+            if (gameState.cemeteryGrid.length === 0) {
+                for (let i = 0; i < gameState.cemeterySize * gameState.cemeterySize; i++) {
+                    gameState.cemeteryGrid.push({ type: 'empty', level: 0 });
+                }
+                
+                // Adicionar alguns túmulos iniciais
+                for (let i = 0; i < 5; i++) {
+                    const randomIndex = Math.floor(Math.random() * gameState.cemeteryGrid.length);
+                    gameState.cemeteryGrid[randomIndex] = { type: 'grave', level: 1 };
+                }
+            }
+            
+            // Criar células
+            gameState.cemeteryGrid.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.className = `grid-cell ${cell.type}`;
+                
+                // Adicionar conteúdo baseado no tipo
+                if (cell.type === 'empty') {
+                    cellElement.textContent = '';
+                } else if (cell.type === 'grave') {
+                    cellElement.textContent = '⚰️';
+                    cellElement.title = `Túmulo Nível ${cell.level}`;
+                } else if (cell.type === 'mine') {
+                    cellElement.textContent = '⛏️';
+                    cellElement.title = `Mina Nível ${cell.level}`;
+                } else if (cell.type === 'treasure') {
+                    cellElement.textContent = '💎';
+                    cellElement.title = 'Tesouro!';
+                } else if (cell.type === 'mausoleum') {
+                    cellElement.textContent = '🏛️';
+                    cellElement.title = 'Mausoléu';
+                } else if (cell.type === 'chapel') {
+                    cellElement.textContent = '⛪';
+                    cellElement.title = 'Capela';
+                } else if (cell.type === 'statue') {
+                    cellElement.textContent = '🗿';
+                    cellElement.title = 'Estatueta Decorativa';
+                } else if (cell.type === 'ornate_tombstone') {
+                    cellElement.textContent = '🪦';
+                    cellElement.title = 'Lápide Ornamentada';
+                } else if (cell.type === 'garden') {
+                    cellElement.textContent = '🌷';
+                    cellElement.title = 'Jardim';
+                } else if (cell.type === 'fountain') {
+                    cellElement.textContent = '⛲';
+                    cellElement.title = 'Fonte';
+                }
+                
+                // Adicionar evento de clique
+                cellElement.addEventListener('click', () => handleCemeteryCellClick(index));
+                
+                grid.appendChild(cellElement);
             });
         }
-        
-        // MELHORIA 2: Sistema de tooltips contextuais
-        function initializeTooltips() {
-            // Adicionar tooltips aos botões importantes
-            const tooltipElements = [
-                { selector: '#build-grave-button', text: 'Construa túmulos para gerar renda passiva constante' },
-                { selector: '#build-mine-button', text: 'Minas produzem ossos e ocasionalmente tesouros valiosos' },
-                { selector: '#build-mausoleum-button', text: 'Mausoléus geram renda passiva premium' },
-                { selector: '#build-chapel-button', text: 'Capelas aumentam a eficiência dos velórios' },
-                { selector: '#expand-button', text: 'Expanda o cemitério para ter mais espaço para construções' },
-                { selector: '#basic-funeral-button', text: 'Realize velórios básicos para ganhar dinheiro rapidamente' },
-                { selector: '#premium-funeral-button', text: 'Velórios premium rendem mais, mas demoram mais para completar' },
-                { selector: '#basic-pickaxe-button', text: 'Use a picareta básica para encontrar ossos e pequenos tesouros' },
-                { selector: '#improved-pickaxe-button', text: 'A picareta aprimorada tem maior chance de encontrar itens valiosos' },
-                { selector: '#prestige-button', text: 'Reinicie seu progresso para ganhar Pontos de Prestígio e desbloquear melhorias permanentes' }
+
+        // Manipular clique em célula do cemitério
+        function handleCemeteryCellClick(index) {
+            const cell = gameState.cemeteryGrid[index];
+            
+            if (cell.type === 'empty') {
+                showNotification('Toque em um botão de construção para construir aqui.', 'info');
+            } else if (cell.type === 'grave') {
+                showNotification(`Túmulo Nível ${cell.level}. Gera renda passiva.`, 'info');
+            } else if (cell.type === 'mine') {
+                showNotification(`Mina Nível ${cell.level}. Produz ossos e tesouros.`, 'info');
+            } else if (cell.type === 'mausoleum') {
+                showNotification('Mausoléu. Gera renda passiva premium.', 'info');
+            } else if (cell.type === 'chapel') {
+                showNotification('Capela. Aumenta eficiência de velórios.', 'info');
+            } else if (cell.type === 'statue') {
+                showNotification('Estatueta. Aumenta a atratividade do cemitério.', 'info');
+            } else if (cell.type === 'ornate_tombstone') {
+                showNotification('Lápide Ornamentada. Aumenta o valor dos túmulos.', 'info');
+            } else if (cell.type === 'garden') {
+                showNotification('Jardim. Aumenta a felicidade dos visitantes.', 'info');
+            } else if (cell.type === 'fountain') {
+                showNotification('Fonte. Aumenta o prestígio do cemitério.', 'info');
+            } else if (cell.type === 'treasure') {
+                collectTreasure(index);
+            }
+        }
+
+        // Coletar tesouro
+        function collectTreasure(index) {
+            gameState.treasures++;
+            gameState.cemeteryGrid[index] = { type: 'empty', level: 0 };
+            
+            // Adicionar à coleção
+            const treasureTypes = ['Anel Antigo', 'Moeda Rara', 'Estatueta Valiosa', 'Joia Preciosa', 'Relíquia Familiar', 'Medalha Histórica'];
+            const randomTreasure = treasureTypes[Math.floor(Math.random() * treasureTypes.length)];
+            gameState.treasuresCollection.push(randomTreasure);
+            
+            // Verificar conquista
+            checkAchievement('firstTreasure', 1);
+            
+            showNotification(`Você encontrou um tesouro: ${randomTreasure}!`, 'success');
+            addToEventLog(`Encontrou tesouro: ${randomTreasure}`);
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir túmulo
+        function buildGrave() {
+            if (gameState.money < 100) {
+                showNotification('Dinheiro insuficiente para construir um túmulo!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 100;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'grave', level: 1 };
+            
+            // Verificar conquistas
+            checkAchievement('firstGrave', 1);
+            checkAchievement('tenGraves', countGraves());
+            
+            showNotification('Túmulo construído com sucesso!', 'success');
+            addToEventLog('Construiu um túmulo');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir mina
+        function buildMine() {
+            if (gameState.money < 500) {
+                showNotification('Dinheiro insuficiente para construir uma mina!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 500;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'mine', level: 1 };
+            
+            // Verificar conquista
+            checkAchievement('firstMine', 1);
+            
+            showNotification('Mina construída com sucesso!', 'success');
+            addToEventLog('Construiu uma mina');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir mausoléu
+        function buildMausoleum() {
+            if (gameState.money < 1500) {
+                showNotification('Dinheiro insuficiente para construir um mausoléu!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 1500;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'mausoleum', level: 1 };
+            
+            showNotification('Mausoléu construído com sucesso!', 'success');
+            addToEventLog('Construiu um mausoléu');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir capela
+        function buildChapel() {
+            if (gameState.money < 2000) {
+                showNotification('Dinheiro insuficiente para construir uma capela!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 2000;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'chapel', level: 1 };
+            
+            showNotification('Capela construída com sucesso!', 'success');
+            addToEventLog('Construiu uma capela');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir estatueta
+        function buildStatue() {
+            if (gameState.money < 300) {
+                showNotification('Dinheiro insuficiente para colocar uma estatueta!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 300;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'statue', level: 1 };
+            
+            showNotification('Estatueta colocada com sucesso!', 'success');
+            addToEventLog('Colocou uma estatueta decorativa');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir lápide ornamentada
+        function buildOrnateTombstone() {
+            if (gameState.money < 400) {
+                showNotification('Dinheiro insuficiente para colocar uma lápide ornamentada!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 400;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'ornate_tombstone', level: 1 };
+            
+            showNotification('Lápide ornamentada colocada com sucesso!', 'success');
+            addToEventLog('Colocou uma lápide ornamentada');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir jardim
+        function buildGarden() {
+            if (gameState.money < 600) {
+                showNotification('Dinheiro insuficiente para plantar um jardim!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 600;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'garden', level: 1 };
+            
+            showNotification('Jardim plantado com sucesso!', 'success');
+            addToEventLog('Plantou um jardim');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Construir fonte
+        function buildFountain() {
+            if (gameState.money < 1200) {
+                showNotification('Dinheiro insuficiente para construir uma fonte!', 'error');
+                return;
+            }
+            
+            // Encontrar célula vazia
+            const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+            if (emptyIndex === -1) {
+                showNotification('Não há espaço vazio no cemitério! Expanda-o primeiro.', 'error');
+                return;
+            }
+            
+            gameState.money -= 1200;
+            gameState.cemeteryGrid[emptyIndex] = { type: 'fountain', level: 1 };
+            
+            showNotification('Fonte construída com sucesso!', 'success');
+            addToEventLog('Construiu uma fonte');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Expandir cemitério
+        function expandCemetery() {
+            if (gameState.money < 2000) {
+                showNotification('Dinheiro insuficiente para expandir o cemitério!', 'error');
+                return;
+            }
+            
+            gameState.money -= 2000;
+            gameState.cemeterySize += 2;
+            
+            // Adicionar novas células vazias
+            const newCells = (gameState.cemeterySize * gameState.cemeterySize) - gameState.cemeteryGrid.length;
+            for (let i = 0; i < newCells; i++) {
+                gameState.cemeteryGrid.push({ type: 'empty', level: 0 });
+            }
+            
+            showNotification('Cemitério expandido com sucesso!', 'success');
+            addToEventLog('Expandiu o cemitério');
+            
+            updateDisplay();
+            initializeCemetery();
+        }
+
+        // Iniciar velório básico
+        function startBasicFuneral() {
+            if (gameState.money < 200) {
+                showNotification('Dinheiro insuficiente para realizar um velório básico!', 'error');
+                return;
+            }
+            
+            if (gameState.coffins < 1) {
+                showNotification('Caixões insuficientes!', 'error');
+                return;
+            }
+            
+            gameState.basicFuneralProgress = 100;
+            gameState.money -= 200;
+            gameState.coffins -= 1;
+            
+            showNotification('Velório básico iniciado!', 'info');
+            addToEventLog('Iniciou velório básico');
+            
+            updateDisplay();
+        }
+
+        // Iniciar velório premium
+        function startPremiumFuneral() {
+            if (gameState.money < 500) {
+                showNotification('Dinheiro insuficiente para realizar um velório premium!', 'error');
+                return;
+            }
+            
+            if (gameState.coffins < 1) {
+                showNotification('Caixões insuficientes!', 'error');
+                return;
+            }
+            
+            gameState.premiumFuneralProgress = 100;
+            gameState.money -= 500;
+            gameState.coffins -= 1;
+            
+            showNotification('Velório premium iniciado!', 'info');
+            addToEventLog('Iniciou velório premium');
+            
+            updateDisplay();
+        }
+
+        // Vender plano básico
+        function sellBasicPlan() {
+            if (gameState.money < 150) {
+                showNotification('Dinheiro insuficiente para criar um plano básico!', 'error');
+                return;
+            }
+            
+            gameState.basicPlanProgress = 100;
+            gameState.money -= 150;
+            
+            showNotification('Plano funerário básico em andamento!', 'info');
+            addToEventLog('Iniciou venda de plano básico');
+            
+            updateDisplay();
+        }
+
+        // Vender plano premium
+        function sellPremiumPlan() {
+            if (gameState.money < 400) {
+                showNotification('Dinheiro insuficiente para criar um plano premium!', 'error');
+                return;
+            }
+            
+            gameState.premiumPlanProgress = 100;
+            gameState.money -= 400;
+            
+            showNotification('Plano funerário premium em andamento!', 'info');
+            addToEventLog('Iniciou venda de plano premium');
+            
+            updateDisplay();
+        }
+
+        // Iniciar picareta básica
+        function startBasicPickaxe() {
+            if (gameState.money < 20) {
+                showNotification('Dinheiro insuficiente para usar a picareta básica!', 'error');
+                return;
+            }
+            
+            gameState.basicPickaxeProgress = 100;
+            gameState.money -= 20;
+            
+            showNotification('Usando picareta básica...', 'info');
+            addToEventLog('Iniciou mineração com picareta básica');
+            
+            updateDisplay();
+        }
+
+        // Iniciar picareta aprimorada
+        function startImprovedPickaxe() {
+            if (gameState.money < 100) {
+                showNotification('Dinheiro insuficiente para usar a picareta aprimorada!', 'error');
+                return;
+            }
+            
+            gameState.improvedPickaxeProgress = 100;
+            gameState.money -= 100;
+            
+            showNotification('Usando picareta aprimorada...', 'info');
+            addToEventLog('Iniciou mineração com picareta aprimorada');
+            
+            updateDisplay();
+        }
+
+        // Iniciar mineração profunda
+        function startDeepMining() {
+            if (gameState.money < 200) {
+                showNotification('Dinheiro insuficiente para mineração profunda!', 'error');
+                return;
+            }
+            
+            gameState.deepMiningProgress = 100;
+            gameState.money -= 200;
+            
+            showNotification('Mineração profunda iniciada!', 'info');
+            addToEventLog('Iniciou mineração profunda');
+            
+            updateDisplay();
+        }
+
+        // Iniciar expedição curta
+        function startShortExpedition() {
+            if (gameState.money < 500) {
+                showNotification('Dinheiro insuficiente para uma expedição curta!', 'error');
+                return;
+            }
+            
+            gameState.shortExpeditionProgress = 100;
+            gameState.money -= 500;
+            
+            showNotification('Expedição curta iniciada!', 'info');
+            addToEventLog('Iniciou expedição curta');
+            
+            updateDisplay();
+        }
+
+        // Iniciar expedição longa
+        function startLongExpedition() {
+            if (gameState.money < 1500) {
+                showNotification('Dinheiro insuficiente para uma expedição longa!', 'error');
+                return;
+            }
+            
+            gameState.longExpeditionProgress = 100;
+            gameState.money -= 1500;
+            
+            showNotification('Expedição longa iniciada!', 'info');
+            addToEventLog('Iniciou expedição longa');
+            
+            updateDisplay();
+        }
+
+        // Vender recursos
+        function sellResources() {
+            if (gameState.bones < 1 && gameState.treasures < 1) {
+                showNotification('Você não tem recursos para vender!', 'error');
+                return;
+            }
+            
+            const bonesEarnings = gameState.bones * 5;
+            const treasuresEarnings = gameState.treasures * 1000;
+            const totalEarnings = bonesEarnings + treasuresEarnings;
+            
+            gameState.money += totalEarnings;
+            
+            // Verificar conquistas
+            checkAchievement('boneCollector', gameState.bones);
+            checkAchievement('treasureHunter', gameState.treasures);
+            
+            showNotification(`Vendeu ${gameState.bones} ossos e ${gameState.treasures} tesouros por 💰${totalEarnings}!`, 'success');
+            addToEventLog(`Vendeu recursos (+💰${totalEarnings})`);
+            
+            gameState.bones = 0;
+            gameState.treasures = 0;
+            gameState.treasuresCollection = [];
+            updateDisplay();
+        }
+
+        // Contratar funcionário
+        function hireEmployee(type) {
+            const cost = gameState.employeeCosts[type];
+            
+            if (gameState.money < cost) {
+                showNotification(`Dinheiro insuficiente para contratar este funcionário!`, 'error');
+                return;
+            }
+            
+            gameState.money -= cost;
+            gameState.hiredEmployees[type]++;
+            gameState.employees++;
+            
+            // Verificar conquista
+            checkAchievement('firstEmployee', 1);
+            
+            // Aumentar custo para próxima contratação
+            gameState.employeeCosts[type] = Math.floor(cost * 1.5);
+            
+            const employeeNames = {
+                digger: 'Coveiro',
+                organizer: 'Organizador de Velórios',
+                salesman: 'Vendedor',
+                miner: 'Minerador',
+                gardener: 'Jardineiro',
+                security: 'Segurança',
+                florist: 'Florista',
+                manager: 'Gerente'
+            };
+            
+            showNotification(`Contratou um ${employeeNames[type]}!`, 'success');
+            addToEventLog(`Contratou um ${employeeNames[type]}`);
+            
+            updateDisplay();
+        }
+
+        // Inicializar sistema de conquistas
+        function initializeAchievements() {
+            const achievementsGrid = document.getElementById('achievements-grid');
+            achievementsGrid.innerHTML = '';
+            
+            const achievements = [
+                { id: 'firstGrave', name: 'Primeiro Túmulo', description: 'Construa seu primeiro túmulo', icon: '⚰️' },
+                { id: 'tenGraves', name: 'Coveiro Profissional', description: 'Construa 10 túmulos', icon: '⚰️⚰️' },
+                { id: 'firstMine', name: 'Primeira Mina', description: 'Construa sua primeira mina', icon: '⛏️' },
+                { id: 'firstTreasure', name: 'Caçador de Tesouros', description: 'Encontre seu primeiro tesouro', icon: '💎' },
+                { id: 'firstEmployee', name: 'Primeiro Funcionário', description: 'Contrate seu primeiro funcionário', icon: '👥' },
+                { id: 'moneyMaker', name: 'Fazendo Dinheiro', description: 'Acumule 10.000 de dinheiro', icon: '💰' },
+                { id: 'boneCollector', name: 'Colecionador de Ossos', description: 'Colecione 100 ossos', icon: '🦴' },
+                { id: 'treasureHunter', name: 'Caçador de Tesouros', description: 'Encontre 10 tesouros', icon: '💎💎' }
             ];
             
-            tooltipElements.forEach(item => {
-                const element = document.querySelector(item.selector);
-                if (element) {
-                    element.classList.add('tooltip');
-                    
-                    const tooltip = document.createElement('span');
-                    tooltip.className = 'tooltiptext';
-                    tooltip.textContent = item.text;
-                    
-                    element.appendChild(tooltip);
-                }
+            achievements.forEach(achievement => {
+                const achievementCard = document.createElement('div');
+                achievementCard.className = `achievement-card ${gameState.achievements[achievement.id].unlocked ? '' : 'achievement-locked'}`;
+                
+                const progress = gameState.achievements[achievement.id].progress;
+                const target = gameState.achievements[achievement.id].target;
+                const progressPercent = Math.min(100, (progress / target) * 100);
+                
+                achievementCard.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${achievement.name}</div>
+                        <div class="achievement-description">${achievement.description}</div>
+                        <div class="achievement-progress">
+                            <div class="achievement-progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                achievementsGrid.appendChild(achievementCard);
             });
         }
-        
-        // MELHORIA 3: Sistema de dicas contextuais
-        function showContextHint(element, message) {
-            // Remover dica anterior se existir
-            const existingHint = element.querySelector('.context-hint');
-            if (existingHint) existingHint.remove();
+
+        // Verificar conquista
+        function checkAchievement(achievementId, progress) {
+            if (gameState.achievements[achievementId].unlocked) return;
             
-            const hint = document.createElement('div');
-            hint.className = 'context-hint';
-            hint.textContent = '!';
-            hint.title = message;
+            gameState.achievements[achievementId].progress = progress;
             
-            element.style.position = 'relative';
-            element.appendChild(hint);
+            if (progress >= gameState.achievements[achievementId].target) {
+                gameState.achievements[achievementId].unlocked = true;
+                showNotification(`Conquista desbloqueada: ${achievementId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}!`, 'success');
+                addToEventLog(`Conquista desbloqueada: ${achievementId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`);
+                
+                // Recompensa por conquista
+                gameState.money += 500;
+                gameState.prestigePoints += 1;
+                
+                // Atualizar display de conquistas
+                initializeAchievements();
+            }
+        }
+
+        // Contar túmulos
+        function countGraves() {
+            return gameState.cemeteryGrid.filter(cell => cell.type === 'grave').length;
+        }
+
+        // Inicializar sistema de bônus diário
+        function initializeDailyBonus() {
+            const today = new Date().toDateString();
             
-            // Remover após 10 segundos
-            setTimeout(() => {
-                if (hint.parentNode) {
-                    hint.parentNode.removeChild(hint);
+            // Verificar se já resgatou o bônus hoje
+            if (gameState.lastDailyBonus === today) {
+                document.getElementById('claim-daily-bonus-button').disabled = true;
+                document.getElementById('claim-daily-bonus-button').textContent = 'Bônus Já Resgatado Hoje';
+            }
+            
+            // Atualizar streak
+            const streakContainer = document.getElementById('daily-streak');
+            streakContainer.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = `streak-day ${i < gameState.dailyBonusStreak ? 'active' : ''}`;
+                dayElement.textContent = i + 1;
+                streakContainer.appendChild(dayElement);
+            }
+        }
+
+        // Resgatar bônus diário
+        function claimDailyBonus() {
+            const today = new Date().toDateString();
+            
+            if (gameState.lastDailyBonus === today) {
+                showNotification('Você já resgatou o bônus de hoje!', 'error');
+                return;
+            }
+            
+            // Calcular recompensa
+            const baseReward = 500;
+            const streakBonus = gameState.dailyBonusStreak * 100;
+            const totalReward = baseReward + streakBonus;
+            
+            gameState.money += totalReward;
+            gameState.lastDailyBonus = today;
+            gameState.dailyBonusStreak = (gameState.dailyBonusStreak + 1) % 7;
+            
+            showNotification(`Bônus diário resgatado! +💰${totalReward} (Streak: ${gameState.dailyBonusStreak})`, 'success');
+            addToEventLog(`Resgatou bônus diário (+💰${totalReward})`);
+            
+            // Atualizar UI
+            document.getElementById('claim-daily-bonus-button').disabled = true;
+            document.getElementById('claim-daily-bonus-button').textContent = 'Bônus Já Resgatado Hoje';
+            
+            initializeDailyBonus();
+            updateDisplay();
+        }
+
+        // Inicializar árvore de pesquisa
+        function initializeResearchTree() {
+            const researchTree = document.getElementById('research-tree');
+            researchTree.innerHTML = '';
+            
+            const researchNodes = [
+                { id: 'advancedMining', name: 'Mineração Avançada', description: 'Desbloqueia mineração profunda', icon: '🕳️', cost: 1000, tier: 1 },
+                { id: 'efficientFunerals', name: 'Velórios Eficientes', description: 'Velórios produzem 20% mais', icon: '⚰️', cost: 1500, tier: 1 },
+                { id: 'automatedSales', name: 'Vendas Automatizadas', description: 'Vendedores são 25% mais eficientes', icon: '💼', cost: 2000, tier: 2 },
+                { id: 'cemeteryExpansion', name: 'Expansão de Cemitério', description: 'Desbloqueia expansões maiores', icon: '🏞️', cost: 3000, tier: 2 }
+            ];
+            
+            // Agrupar por tier
+            const tiers = {};
+            researchNodes.forEach(node => {
+                if (!tiers[node.tier]) tiers[node.tier] = [];
+                tiers[node.tier].push(node);
+            });
+            
+            // Criar tiers
+            Object.keys(tiers).forEach(tier => {
+                const tierElement = document.createElement('div');
+                tierElement.className = 'research-tier';
+                
+                tiers[tier].forEach(node => {
+                    const nodeElement = document.createElement('div');
+                    const isUnlocked = gameState.research[node.id];
+                    const canAfford = gameState.money >= node.cost;
+                    
+                    nodeElement.className = `research-node ${isUnlocked ? 'unlocked' : canAfford ? '' : 'locked'}`;
+                    nodeElement.innerHTML = `
+                        <div class="research-node-icon">${node.icon}</div>
+                        <div class="research-node-name">${node.name}</div>
+                        <div class="research-node-cost">💰${node.cost}</div>
+                    `;
+                    
+                    if (!isUnlocked && canAfford) {
+                        nodeElement.addEventListener('click', () => researchNode(node.id, node.cost));
+                    }
+                    
+                    tierElement.appendChild(nodeElement);
+                });
+                
+                researchTree.appendChild(tierElement);
+            });
+        }
+
+        // Pesquisar tecnologia
+        function researchNode(nodeId, cost) {
+            if (gameState.money < cost) {
+                showNotification('Dinheiro insuficiente para pesquisar!', 'error');
+                return;
+            }
+            
+            gameState.money -= cost;
+            gameState.research[nodeId] = true;
+            
+            showNotification(`Tecnologia pesquisada: ${nodeId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}!`, 'success');
+            addToEventLog(`Pesquisou: ${nodeId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`);
+            
+            initializeResearchTree();
+            updateDisplay();
+        }
+
+        // Reinício de prestígio
+        function prestigeReset() {
+            if (gameState.money < 100000) {
+                showNotification('Você precisa de pelo menos 💰100.000 para reiniciar por prestígio!', 'error');
+                return;
+            }
+            
+            const prestigePoints = Math.floor(gameState.money / 100000);
+            gameState.prestigePoints += prestigePoints;
+            
+            showNotification(`Reinício de prestígio! Ganhou ⭐${prestigePoints} pontos de prestígio!`, 'success');
+            addToEventLog(`Reiniciou por prestígio (+⭐${prestigePoints})`);
+            
+            // Reiniciar o jogo, mantendo apenas prestígio e conquistas
+            const savedAchievements = {...gameState.achievements};
+            const savedPrestigePoints = gameState.prestigePoints;
+            const savedPrestigeUpgrades = {...gameState.prestigeUpgrades};
+            const savedResearch = {...gameState.research};
+            const savedCemeteryName = gameState.cemeteryName;
+            
+            startNewGame();
+            
+            // Restaurar prestígio e conquistas
+            gameState.achievements = savedAchievements;
+            gameState.prestigePoints = savedPrestigePoints;
+            gameState.prestigeUpgrades = savedPrestigeUpgrades;
+            gameState.research = savedResearch;
+            gameState.cemeteryName = savedCemeteryName;
+            
+            // Aplicar bônus de prestígio
+            gameState.money += gameState.prestigeUpgrades.initialMoney * 1000;
+            gameState.prestigeMultiplier += gameState.prestigeUpgrades.earningsMultiplier * 0.1;
+            
+            updateDisplay();
+            initializeAchievements();
+        }
+
+        // Comprar melhoria de prestígio
+        function buyPrestigeUpgrade(upgradeId) {
+            const upgradeCosts = {
+                initialMoney: 5,
+                productionSpeed: 10,
+                earningsMultiplier: 15,
+                employeeCapacity: 20
+            };
+            
+            const cost = upgradeCosts[upgradeId];
+            
+            if (gameState.prestigePoints < cost) {
+                showNotification('Pontos de prestígio insuficientes!', 'error');
+                return;
+            }
+            
+            gameState.prestigePoints -= cost;
+            gameState.prestigeUpgrades[upgradeId]++;
+            
+            showNotification(`Melhoria de prestígio comprada: ${upgradeId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}!`, 'success');
+            addToEventLog(`Comprou melhoria de prestígio: ${upgradeId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`);
+            
+            updateDisplay();
+        }
+
+        // Sistema de fantasma flutuante
+        function startFloatingGhost() {
+            setInterval(() => {
+                if (!gameState.floatingGhost.active && Math.random() < 0.1) {
+                    showFloatingGhost();
+                }
+            }, 30000); // Verificar a cada 30 segundos
+        }
+
+        function showFloatingGhost() {
+            if (gameState.floatingGhost.active) return;
+            
+            gameState.floatingGhost.active = true;
+            
+            const ghost = document.createElement('div');
+            ghost.className = 'floating-ghost';
+            ghost.textContent = '👻';
+            ghost.style.left = `${Math.random() * 80 + 10}%`;
+            ghost.style.top = `${Math.random() * 60 + 20}%`;
+            
+            ghost.addEventListener('click', () => {
+                collectFloatingGhost(ghost);
+            });
+            
+            document.body.appendChild(ghost);
+            gameState.floatingGhost.element = ghost;
+            
+            // Remover fantasma após 10 segundos se não for clicado
+            gameState.floatingGhost.timeout = setTimeout(() => {
+                if (gameState.floatingGhost.active) {
+                    document.body.removeChild(ghost);
+                    gameState.floatingGhost.active = false;
                 }
             }, 10000);
         }
-        
-        // MELHORIA 4: Sistema de notificações persistentes
-        function showPersistentNotification(message, type = 'info', duration = 5000) {
-            const notificationPanel = document.getElementById('notification-panel');
+
+        function collectFloatingGhost(ghost) {
+            if (!gameState.floatingGhost.active) return;
             
-            const notification = document.createElement('div');
-            notification.className = `persistent-notification ${type}`;
+            clearTimeout(gameState.floatingGhost.timeout);
+            document.body.removeChild(ghost);
+            gameState.floatingGhost.active = false;
             
-            // Ícone baseado no tipo
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
-            if (type === 'error') icon = 'exclamation-circle';
+            // Calcular recompensa
+            const baseReward = gameState.passiveIncome * 10;
+            const bonusBones = Math.floor(Math.random() * 10) + 5;
             
-            notification.innerHTML = `
-                <i class="fas fa-${icon}"></i>
-                <span>${message}</span>
-                <div class="close"><i class="fas fa-times"></i></div>
-            `;
+            gameState.money += baseReward;
+            gameState.bones += bonusBones;
             
-            notificationPanel.appendChild(notification);
+            showNotification(`Fantasma coletado! +💰${baseReward} e +🦴${bonusBones}`, 'success');
+            addToEventLog(`Coletou fantasma flutuante (+💰${baseReward}, +🦴${bonusBones})`);
             
-            // Fechar notificação ao clicar no X
-            notification.querySelector('.close').addEventListener('click', () => {
-                notification.remove();
-            });
-            
-            // Remover automaticamente após o tempo especificado
-            if (duration > 0) {
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, duration);
-            }
-            
-            // Limitar a 5 notificações
-            while (notificationPanel.children.length > 5) {
-                notificationPanel.removeChild(notificationPanel.firstChild);
-            }
+            updateDisplay();
         }
-        
-        // MELHORIA 5: Sistema de ajuda integrado
-        function initializeHelpSystem() {
-            const helpButton = document.getElementById('help-button');
-            const helpPanel = document.getElementById('help-panel');
-            const helpTitle = document.getElementById('help-title');
-            const helpContent = document.getElementById('help-content');
+
+        // Sistema de texto flutuante
+        function setupFloatingText() {
+            // Adicionar evento de clique em todos os botões que geram recursos
+            const resourceButtons = [
+                'basic-funeral-button', 'premium-funeral-button',
+                'basic-plan-button', 'premium-plan-button',
+                'basic-pickaxe-button', 'improved-pickaxe-button',
+                'deep-mining-button'
+            ];
             
-            // Alternar visibilidade do painel de ajuda
-            helpButton.addEventListener('click', () => {
-                helpPanel.classList.toggle('active');
-                
-                if (helpPanel.classList.contains('active')) {
-                    updateHelpContent();
+            resourceButtons.forEach(buttonId => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.addEventListener('click', function(e) {
+                        // Obter a recompensa esperada
+                        let reward = 0;
+                        switch(buttonId) {
+                            case 'basic-funeral-button': reward = 300; break;
+                            case 'premium-funeral-button': reward = 800; break;
+                            case 'basic-plan-button': reward = 5; break;
+                            case 'premium-plan-button': reward = 15; break;
+                            case 'basic-pickaxe-button': reward = 20; break;
+                            case 'improved-pickaxe-button': reward = 50; break;
+                            case 'deep-mining-button': reward = 100; break;
+                        }
+                        
+                        if (reward > 0) {
+                            createFloatingText(e.clientX, e.clientY, `+💰${reward}`);
+                        }
+                    });
                 }
-            });
-            
-            // Fechar ajuda ao clicar fora
-            document.addEventListener('click', (e) => {
-                if (!helpPanel.contains(e.target) && e.target !== helpButton) {
-                    helpPanel.classList.remove('active');
-                }
-            });
-            
-            // Conteúdo de ajuda baseado na aba atual
-            const helpContents = {
-                cemetery: {
-                    title: 'Ajuda - Cemitério',
-                    content: 'Aqui você pode construir e gerenciar seu cemitério. Expanda o terreno para ter mais espaço e construa diferentes tipos de estruturas para gerar renda passiva e recursos.'
-                },
-                funeral: {
-                    title: 'Ajuda - Velórios',
-                    content: 'Realize velórios para ganhar dinheiro rapidamente. Velórios premium rendem mais, mas demoram mais para completar. Venda planos funerários para aumentar sua renda passiva.'
-                },
-                mining: {
-                    title: 'Ajuda - Mineração',
-                    content: 'Use picaretas para encontrar ossos, dinheiro e tesouros. Picaretas melhores têm maior chance de encontrar itens valiosos. Envie expedições para obter recursos extras.'
-                },
-                employees: {
-                    title: 'Ajuda - Funcionários',
-                    content: 'Contrate funcionários para automatizar tarefas. Cada tipo de funcionário tem uma especialidade diferente. Gerentes aumentam a eficiência de todos os funcionários.'
-                },
-                prestige: {
-                    title: 'Ajuda - Prestígio',
-                    content: 'Quando tiver dinheiro suficiente, você pode reiniciar seu progresso em troca de Pontos de Prestígio. Use esses pontos para comprar melhorias permanentes.'
-                },
-                achievements: {
-                    title: 'Ajuda - Conquistas',
-                    content: 'Complete objetivos para desbloquear conquistas. Cada conquista desbloqueada concede recompensas especiais.'
-                }
-            };
-            
-            // Atualizar conteúdo da ajuda baseado na aba atual
-            function updateHelpContent() {
-                const activeTab = document.querySelector('.tab.active');
-                if (activeTab) {
-                    const tabId = activeTab.getAttribute('data-tab');
-                    if (helpContents[tabId]) {
-                        helpTitle.textContent = helpContents[tabId].title;
-                        helpContent.textContent = helpContents[tabId].content;
-                    }
-                }
-            }
-            
-            // Atualizar ajuda quando mudar de aba
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    if (helpPanel.classList.contains('active')) {
-                        updateHelpContent();
-                    }
-                });
             });
         }
-        
-        // MELHORIA 6: Feedback visual aprimorado para ações
-        function showActionFeedback(message, icon = 'check') {
-            const feedback = document.createElement('div');
-            feedback.className = 'action-feedback';
-            feedback.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+
+        function createFloatingText(x, y, text) {
+            const floatingText = document.createElement('div');
+            floatingText.className = 'floating-text';
+            floatingText.textContent = text;
+            floatingText.style.left = `${x}px`;
+            floatingText.style.top = `${y}px`;
             
-            document.body.appendChild(feedback);
+            document.body.appendChild(floatingText);
             
             // Remover após a animação
             setTimeout(() => {
-                if (feedback.parentNode) {
-                    feedback.parentNode.removeChild(feedback);
+                document.body.removeChild(floatingText);
+            }, 1500);
+        }
+
+        // Loop principal do jogo
+        function gameLoop() {
+            // Processar velórios
+            if (gameState.basicFuneralProgress > 0) {
+                gameState.basicFuneralProgress -= 10;
+                if (gameState.basicFuneralProgress <= 0) {
+                    let earnings = 300 * gameState.prestigeMultiplier;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'funeral_boost') {
+                        earnings *= gameState.specialEvent.multiplier;
+                    }
+                    gameState.money += earnings;
+                    gameState.coffins += 1; // Recupera o caixão
+                    showNotification(`Velório básico concluído! Ganhou 💰${earnings}`, 'success');
+                    addToEventLog(`Concluiu velório básico (+💰${earnings})`);
+                    
+                    // Verificar conquista
+                    checkAchievement('moneyMaker', gameState.money);
                 }
-            }, 2000);
-        }
-        
-        // MELHORIA 7: Sistema de dicas automáticas para novos jogadores
-        function showNewPlayerHints() {
-            // Verificar se é a primeira vez jogando
-            const hasPlayedBefore = localStorage.getItem('cemeteryTycoonHasPlayed');
-            
-            if (!hasPlayedBefore) {
-                // Mostrar dicas iniciais
-                setTimeout(() => {
-                    showPersistentNotification('Bem-vindo ao Cemitério Tycoon! Comece construindo alguns túmulos.', 'info', 10000);
-                }, 2000);
-                
-                setTimeout(() => {
-                    showPersistentNotification('Use a picareta básica para encontrar ossos e outros recursos.', 'info', 10000);
-                }, 8000);
-                
-                setTimeout(() => {
-                    showPersistentNotification('Contrate funcionários para automatizar tarefas e ganhar recursos mesmo quando estiver offline.', 'info', 10000);
-                }, 15000);
-                
-                // Marcar como já jogou
-                localStorage.setItem('cemeteryTycoonHasPlayed', 'true');
-            }
-        }
-        
-        // MELHORIA 8: Sistema de estatísticas detalhadas
-        function initializeStatistics() {
-            // Adicionar aba de estatísticas se não existir
-            if (!document.getElementById('stats-tab')) {
-                const statsTab = document.createElement('div');
-                statsTab.className = 'tab';
-                statsTab.setAttribute('data-tab', 'stats');
-                statsTab.innerHTML = '<i class="fas fa-chart-bar"></i><span>Estatísticas</span>';
-                
-                const tabContainer = document.querySelector('.tab-container');
-                tabContainer.appendChild(statsTab);
-                
-                const statsContent = document.createElement('div');
-                statsContent.id = 'stats-tab';
-                statsContent.className = 'tab-content';
-                statsContent.innerHTML = `
-                    <div class="section-header">
-                        <div class="section-title">Estatísticas do Jogo</div>
-                    </div>
-                    <div class="stats-grid" id="stats-grid">
-                        <!-- Estatísticas serão preenchidas aqui -->
-                    </div>
-                `;
-                
-                const gameScreen = document.getElementById('game-screen');
-                const eventLog = document.querySelector('.event-log');
-                gameScreen.insertBefore(statsContent, eventLog);
-                
-                // Adicionar evento de clique na aba
-                statsTab.addEventListener('click', function() {
-                    switchTab('stats');
-                    updateStatistics();
-                });
-            }
-        }
-        
-        function updateStatistics() {
-            const statsGrid = document.getElementById('stats-grid');
-            if (!statsGrid) return;
-            
-            const stats = [
-                { label: 'Dinheiro Ganho Total', value: gameState.totalMoneyEarned || 0, icon: '💰' },
-                { label: 'Ossos Coletados Total', value: gameState.totalBonesCollected || 0, icon: '🦴' },
-                { label: 'Tesouros Encontrados Total', value: gameState.totalTreasuresFound || 0, icon: '💎' },
-                { label: 'Velórios Realizados', value: gameState.funeralsHeld || 0, icon: '⚰️' },
-                { label: 'Planos Vendidos', value: gameState.plansSold || 0, icon: '📄' },
-                { label: 'Tempo de Jogo', value: formatPlayTime(gameState.playTime || 0), icon: '⏱️' },
-                { label: 'Prestígio Ganho', value: gameState.totalPrestigeEarned || 0, icon: '⭐' },
-                { label: 'Funcionários Contratados', value: gameState.totalEmployeesHired || 0, icon: '👥' }
-            ];
-            
-            statsGrid.innerHTML = '';
-            
-            stats.forEach(stat => {
-                const statCard = document.createElement('div');
-                statCard.className = 'stat-card';
-                statCard.innerHTML = `
-                    <div class="stat-card-icon">${stat.icon}</div>
-                    <div class="stat-card-value">${stat.value}</div>
-                    <div class="stat-card-label">${stat.label}</div>
-                `;
-                
-                statsGrid.appendChild(statCard);
-            });
-        }
-        
-        function formatPlayTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            
-            if (hours > 0) {
-                return `${hours}h ${minutes}m`;
-            } else {
-                return `${minutes}m`;
-            }
-        }
-        
-        // MELHORIA 9: Sistema de salvamento automático
-        function initializeAutoSave() {
-            // Salvar a cada 30 segundos
-            setInterval(() => {
-                saveGame();
-                showPersistentNotification('Jogo salvo automaticamente', 'success', 2000);
-            }, 30000);
-            
-            // Salvar quando o jogador sair da página
-            window.addEventListener('beforeunload', () => {
-                saveGame();
-            });
-        }
-        
-        // MELHORIA 10: Sistema de objetivos e missões
-        function initializeQuestSystem() {
-            // Adicionar sistema de missões se não existir
-            if (!document.getElementById('quests-tab')) {
-                const questsTab = document.createElement('div');
-                questsTab.className = 'tab';
-                questsTab.setAttribute('data-tab', 'quests');
-                questsTab.innerHTML = '<i class="fas fa-tasks"></i><span>Missões</span>';
-                
-                const tabContainer = document.querySelector('.tab-container');
-                tabContainer.appendChild(questsTab);
-                
-                const questsContent = document.createElement('div');
-                questsContent.id = 'quests-tab';
-                questsContent.className = 'tab-content';
-                questsContent.innerHTML = `
-                    <div class="section-header">
-                        <div class="section-title">Missões Ativas</div>
-                    </div>
-                    <div class="quests-list" id="active-quests">
-                        <!-- Missões ativas serão preenchidas aqui -->
-                    </div>
-                    <div class="section-header">
-                        <div class="section-title">Missões Concluídas</div>
-                    </div>
-                    <div class="quests-list" id="completed-quests">
-                        <!-- Missões concluídas serão preenchidas aqui -->
-                    </div>
-                `;
-                
-                const gameScreen = document.getElementById('game-screen');
-                const eventLog = document.querySelector('.event-log');
-                gameScreen.insertBefore(questsContent, eventLog);
-                
-                // Adicionar evento de clique na aba
-                questsTab.addEventListener('click', function() {
-                    switchTab('quests');
-                    updateQuests();
-                });
             }
             
-            // Inicializar missões se não existirem
-            if (!gameState.quests) {
-                gameState.quests = {
-                    active: [
-                        { id: 'build5graves', name: 'Construtor Iniciante', description: 'Construa 5 túmulos', target: 5, progress: 0, reward: { money: 500, bones: 10 }, completed: false },
-                        { id: 'firstMine', name: 'Primeira Mina', description: 'Construa sua primeira mina', target: 1, progress: 0, reward: { money: 300, bones: 5 }, completed: false },
-                        { id: 'earn1000', name: 'Fazendo Dinheiro', description: 'Acumule 1000 de dinheiro', target: 1000, progress: 0, reward: { money: 200, bones: 5 }, completed: false }
-                    ],
-                    completed: []
-                };
-            }
-        }
-        
-        function updateQuests() {
-            const activeQuests = document.getElementById('active-quests');
-            const completedQuests = document.getElementById('completed-quests');
-            
-            if (!activeQuests || !completedQuests) return;
-            
-            // Atualizar progresso das missões
-            gameState.quests.active.forEach(quest => {
-                switch(quest.id) {
-                    case 'build5graves':
-                        quest.progress = countGraves();
-                        break;
-                    case 'firstMine':
-                        quest.progress = gameState.cemeteryGrid.filter(cell => cell.type === 'mine').length;
-                        break;
-                    case 'earn1000':
-                        quest.progress = gameState.money;
-                        break;
+            if (gameState.premiumFuneralProgress > 0) {
+                gameState.premiumFuneralProgress -= 8;
+                if (gameState.premiumFuneralProgress <= 0) {
+                    let earnings = 800 * gameState.prestigeMultiplier;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'funeral_boost') {
+                        earnings *= gameState.specialEvent.multiplier;
+                    }
+                    gameState.money += earnings;
+                    gameState.coffins += 1; // Recupera o caixão
+                    showNotification(`Velório premium concluído! Ganhou 💰${earnings}`, 'success');
+                    addToEventLog(`Concluiu velório premium (+💰${earnings})`);
+                    
+                    // Verificar conquista
+                    checkAchievement('moneyMaker', gameState.money);
                 }
-                
-                // Verificar se a missão foi completada
-                if (quest.progress >= quest.target && !quest.completed) {
-                    quest.completed = true;
-                    
-                    // Dar recompensa
-                    gameState.money += quest.reward.money;
-                    gameState.bones += quest.reward.bones;
-                    
-                    // Mover para completadas
-                    gameState.quests.completed.push(quest);
-                    gameState.quests.active = gameState.quests.active.filter(q => q.id !== quest.id);
-                    
-                    showActionFeedback(`Missão concluída: ${quest.name}! Recompensa: 💰${quest.reward.money}, 🦴${quest.reward.bones}`, 'trophy');
-                    addToEventLog(`Missão concluída: ${quest.name}`);
-                    
-                    // Adicionar nova missão
-                    if (quest.id === 'build5graves') {
-                        gameState.quests.active.push({
-                            id: 'build10graves',
-                            name: 'Construtor Avançado',
-                            description: 'Construa 10 túmulos',
-                            target: 10,
-                            progress: countGraves(),
-                            reward: { money: 1000, bones: 20 },
-                            completed: false
-                        });
+            }
+            
+            // Processar planos funerários
+            if (gameState.basicPlanProgress > 0) {
+                gameState.basicPlanProgress -= 15;
+                if (gameState.basicPlanProgress <= 0) {
+                    gameState.passiveIncome += 5;
+                    showNotification('Plano básico vendido! Aumentou a renda passiva.', 'success');
+                    addToEventLog('Vendeu plano básico (+💰5/seg)');
+                }
+            }
+            
+            if (gameState.premiumPlanProgress > 0) {
+                gameState.premiumPlanProgress -= 12;
+                if (gameState.premiumPlanProgress <= 0) {
+                    gameState.passiveIncome += 15;
+                    showNotification('Plano premium vendido! Aumentou a renda passiva.', 'success');
+                    addToEventLog('Vendeu plano premium (+💰15/seg)');
+                }
+            }
+            
+            // Processar picaretas
+            if (gameState.basicPickaxeProgress > 0) {
+                gameState.basicPickaxeProgress -= 20;
+                if (gameState.basicPickaxeProgress <= 0) {
+                    // Picareta básica: chance de encontrar ossos, pouco dinheiro ou objetos
+                    const random = Math.random();
+                    if (random < 0.6) {
+                        // Ossos
+                        const bonesFound = Math.floor(Math.random() * 3) + 1;
+                        gameState.bones += bonesFound;
+                        showNotification(`Picareta básica: encontrou ${bonesFound} ossos!`, 'success');
+                        addToEventLog(`Picareta básica: +🦴${bonesFound}`);
+                        checkAchievement('boneCollector', gameState.bones);
+                    } else if (random < 0.9) {
+                        // Dinheiro
+                        const moneyFound = Math.floor(Math.random() * 30) + 10;
+                        gameState.money += moneyFound;
+                        showNotification(`Picareta básica: encontrou 💰${moneyFound}!`, 'success');
+                        addToEventLog(`Picareta básica: +💰${moneyFound}`);
+                    } else {
+                        // Objeto valioso
+                        const objects = ['Anel Antigo', 'Moeda Rara', 'Estatueta Valiosa'];
+                        const randomObject = objects[Math.floor(Math.random() * objects.length)];
+                        gameState.treasuresCollection.push(randomObject);
+                        gameState.treasures++;
+                        showNotification(`Picareta básica: encontrou ${randomObject}!`, 'success');
+                        addToEventLog(`Picareta básica: encontrou ${randomObject}`);
+                        checkAchievement('treasureHunter', gameState.treasures);
                     }
                 }
-            });
-            
-            // Renderizar missões ativas
-            activeQuests.innerHTML = '';
-            gameState.quests.active.forEach(quest => {
-                const progressPercent = Math.min(100, (quest.progress / quest.target) * 100);
-                
-                const questElement = document.createElement('div');
-                questElement.className = 'quest-item';
-                questElement.innerHTML = `
-                    <div class="quest-header">
-                        <div class="quest-name">${quest.name}</div>
-                        <div class="quest-reward">💰${quest.reward.money} 🦴${quest.reward.bones}</div>
-                    </div>
-                    <div class="quest-description">${quest.description}</div>
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Progresso: ${quest.progress}/${quest.target}</span>
-                            <span>${Math.floor(progressPercent)}%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                        </div>
-                    </div>
-                `;
-                
-                activeQuests.appendChild(questElement);
-            });
-            
-            // Renderizar missões completadas
-            completedQuests.innerHTML = '';
-            gameState.quests.completed.forEach(quest => {
-                const questElement = document.createElement('div');
-                questElement.className = 'quest-item';
-                questElement.style.opacity = '0.7';
-                questElement.innerHTML = `
-                    <div class="quest-header">
-                        <div class="quest-name">${quest.name}</div>
-                        <div class="quest-reward"><i class="fas fa-check"></i> Concluída</div>
-                    </div>
-                    <div class="quest-description">${quest.description}</div>
-                `;
-                
-                completedQuests.appendChild(questElement);
-            });
-            
-            // Mostrar dica se não houver missões ativas
-            if (gameState.quests.active.length === 0) {
-                activeQuests.innerHTML = '<p style="text-align: center; color: var(--text-light);">Nenhuma missão ativa no momento. Continue jogando para desbloquear novas missões!</p>';
             }
             
-            if (gameState.quests.completed.length === 0) {
-                completedQuests.innerHTML = '<p style="text-align: center; color: var(--text-light);">Nenhuma missão concluída ainda.</p>';
+            if (gameState.improvedPickaxeProgress > 0) {
+                gameState.improvedPickaxeProgress -= 15;
+                if (gameState.improvedPickaxeProgress <= 0) {
+                    // Picareta aprimorada: maior chance de tesouros
+                    const random = Math.random();
+                    if (random < 0.4) {
+                        // Ossos
+                        const bonesFound = Math.floor(Math.random() * 5) + 3;
+                        gameState.bones += bonesFound;
+                        showNotification(`Picareta aprimorada: encontrou ${bonesFound} ossos!`, 'success');
+                        addToEventLog(`Picareta aprimorada: +🦴${bonesFound}`);
+                        checkAchievement('boneCollector', gameState.bones);
+                    } else if (random < 0.7) {
+                        // Dinheiro
+                        const moneyFound = Math.floor(Math.random() * 80) + 20;
+                        gameState.money += moneyFound;
+                        showNotification(`Picareta aprimorada: encontrou 💰${moneyFound}!`, 'success');
+                        addToEventLog(`Picareta aprimorada: +💰${moneyFound}`);
+                    } else if (random < 0.95) {
+                        // Objeto valioso
+                        const objects = ['Joia Preciosa', 'Relíquia Familiar', 'Medalha Histórica'];
+                        const randomObject = objects[Math.floor(Math.random() * objects.length)];
+                        gameState.treasuresCollection.push(randomObject);
+                        gameState.treasures++;
+                        showNotification(`Picareta aprimorada: encontrou ${randomObject}!`, 'success');
+                        addToEventLog(`Picareta aprimorada: encontrou ${randomObject}`);
+                        checkAchievement('treasureHunter', gameState.treasures);
+                    } else {
+                        // Diamante raro
+                        gameState.treasures += 2;
+                        gameState.treasuresCollection.push('Diamante Raro');
+                        showNotification('Picareta aprimorada: encontrou um Diamante Raro! 💎', 'success');
+                        addToEventLog('Picareta aprimorada: encontrou Diamante Raro');
+                        checkAchievement('treasureHunter', gameState.treasures);
+                    }
+                }
+            }
+            
+            // Processar mineração profunda
+            if (gameState.deepMiningProgress > 0) {
+                gameState.deepMiningProgress -= 15;
+                if (gameState.deepMiningProgress <= 0) {
+                    let bonesFound = Math.floor(Math.random() * 10) + 5;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'mining_boost') {
+                        bonesFound = Math.floor(bonesFound * gameState.specialEvent.multiplier);
+                    }
+                    gameState.bones += bonesFound;
+                    showNotification(`Mineração profunda concluída! Encontrou ${bonesFound} ossos.`, 'success');
+                    addToEventLog(`Concluiu mineração profunda (+🦴${bonesFound})`);
+                    
+                    // Verificar conquista
+                    checkAchievement('boneCollector', gameState.bones);
+                    
+                    // Maior chance de encontrar tesouro
+                    let treasureChance = 0.3;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'treasure_boost') {
+                        treasureChance *= gameState.specialEvent.multiplier;
+                    }
+                    
+                    if (Math.random() < treasureChance) {
+                        const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+                        if (emptyIndex !== -1) {
+                            gameState.cemeteryGrid[emptyIndex] = { type: 'treasure', level: 0 };
+                            showNotification('Encontrou um tesouro enterrado no cemitério!', 'success');
+                            addToEventLog('Encontrou um tesouro enterrado');
+                            initializeCemetery();
+                        }
+                    }
+                }
+            }
+            
+            // Processar expedições
+            if (gameState.shortExpeditionProgress > 0) {
+                gameState.shortExpeditionProgress -= 25;
+                if (gameState.shortExpeditionProgress <= 0) {
+                    const rewards = {
+                        money: Math.floor(Math.random() * 500) + 500,
+                        bones: Math.floor(Math.random() * 20) + 10,
+                        treasures: Math.random() < 0.2 ? 1 : 0
+                    };
+                    
+                    gameState.money += rewards.money;
+                    gameState.bones += rewards.bones;
+                    gameState.treasures += rewards.treasures;
+                    
+                    showNotification(`Expedição curta concluída! Recompensas: 💰${rewards.money}, 🦴${rewards.bones}${rewards.treasures > 0 ? ', 💎1' : ''}`, 'success');
+                    addToEventLog(`Expedição curta concluída (+💰${rewards.money}, +🦴${rewards.bones}${rewards.treasures > 0 ? ', +💎1' : ''})`);
+                    
+                    // Verificar conquistas
+                    checkAchievement('moneyMaker', gameState.money);
+                    checkAchievement('boneCollector', gameState.bones);
+                    if (rewards.treasures > 0) {
+                        checkAchievement('treasureHunter', gameState.treasures);
+                    }
+                }
+            }
+            
+            if (gameState.longExpeditionProgress > 0) {
+                gameState.longExpeditionProgress -= 15;
+                if (gameState.longExpeditionProgress <= 0) {
+                    const rewards = {
+                        money: Math.floor(Math.random() * 1500) + 1000,
+                        bones: Math.floor(Math.random() * 50) + 25,
+                        treasures: Math.floor(Math.random() * 3) + 1
+                    };
+                    
+                    gameState.money += rewards.money;
+                    gameState.bones += rewards.bones;
+                    gameState.treasures += rewards.treasures;
+                    
+                    showNotification(`Expedição longa concluída! Recompensas: 💰${rewards.money}, 🦴${rewards.bones}, 💎${rewards.treasures}`, 'success');
+                    addToEventLog(`Expedição longa concluída (+💰${rewards.money}, +🦴${rewards.bones}, +💎${rewards.treasures})`);
+                    
+                    // Verificar conquistas
+                    checkAchievement('moneyMaker', gameState.money);
+                    checkAchievement('boneCollector', gameState.bones);
+                    checkAchievement('treasureHunter', gameState.treasures);
+                }
+            }
+            
+            // Funcionários automatizados
+            if (gameState.hiredEmployees.digger > 0 && gameState.money >= 100) {
+                const emptyIndex = gameState.cemeteryGrid.findIndex(cell => cell.type === 'empty');
+                if (emptyIndex !== -1 && Math.random() < 0.1) {
+                    gameState.money -= 100;
+                    gameState.cemeteryGrid[emptyIndex] = { type: 'grave', level: 1 };
+                    addToEventLog('Coveiro construiu um túmulo automaticamente');
+                    initializeCemetery();
+                }
+            }
+            
+            if (gameState.hiredEmployees.organizer > 0 && gameState.money >= 200 && gameState.coffins > 0) {
+                if (Math.random() < 0.1) {
+                    gameState.money -= 200;
+                    gameState.coffins -= 1;
+                    let earnings = 300 * gameState.prestigeMultiplier;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'funeral_boost') {
+                        earnings *= gameState.specialEvent.multiplier;
+                    }
+                    gameState.money += earnings;
+                    gameState.coffins += 1;
+                    addToEventLog(`Organizador realizou um velório básico (+💰${earnings})`);
+                }
+            }
+            
+            if (gameState.hiredEmployees.salesman > 0 && gameState.money >= 150) {
+                if (Math.random() < 0.1) {
+                    gameState.money -= 150;
+                    gameState.passiveIncome += 5;
+                    addToEventLog('Vendedor vendeu um plano básico (+💰5/seg)');
+                }
+            }
+            
+            if (gameState.hiredEmployees.miner > 0 && gameState.money >= 50) {
+                if (Math.random() < 0.1) {
+                    gameState.money -= 50;
+                    let bonesFound = Math.floor(Math.random() * 3) + 1;
+                    if (gameState.specialEvent.active && gameState.specialEvent.type === 'mining_boost') {
+                        bonesFound = Math.floor(bonesFound * gameState.specialEvent.multiplier);
+                    }
+                    gameState.bones += bonesFound;
+                    addToEventLog(`Minerador encontrou ${bonesFound} ossos`);
+                }
+            }
+            
+            if (gameState.hiredEmployees.gardener > 0) {
+                // Jardineiro aumenta renda passiva
+                if (Math.random() < 0.05) {
+                    gameState.passiveIncome += 1;
+                    addToEventLog('Jardineiro aumentou a atratividade do cemitério (+💰1/seg)');
+                }
+            }
+            
+            if (gameState.hiredEmployees.florist > 0 && gameState.money >= 100) {
+                if (Math.random() < 0.1) {
+                    gameState.money -= 100;
+                    let earnings = 150 * gameState.prestigeMultiplier;
+                    gameState.money += earnings;
+                    addToEventLog(`Florista vendeu flores (+💰${earnings})`);
+                }
+            }
+            
+            // Efeito do gerente (aumenta eficiência de todos os funcionários)
+            let managerBonus = 1;
+            if (gameState.hiredEmployees.manager > 0) {
+                managerBonus = 1.15; // 15% de aumento na eficiência
+            }
+            
+            // Renda passiva
+            let passiveIncome = gameState.passiveIncome;
+            if (gameState.specialEvent.active && gameState.specialEvent.type === 'income_boost') {
+                passiveIncome *= gameState.specialEvent.multiplier;
+            }
+            gameState.money += passiveIncome * managerBonus;
+            
+            // Atualizar eventos especiais
+            updateSpecialEvents();
+            
+            // Incrementar dia a cada 60 segundos
+            gameState.day += 1/60;
+            
+            // Atualizar display
+            updateDisplay();
+        }
+
+        // Sistema de eventos especiais
+        function checkSpecialEvents() {
+            // 10% de chance de um evento especial a cada verificação
+            if (!gameState.specialEvent.active && Math.random() < 0.1) {
+                startSpecialEvent();
             }
         }
-        
-        // Inicializar todas as melhorias quando o jogo carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... (código de inicialização existente) ...
+
+        function startSpecialEvent() {
+            const events = [
+                {
+                    type: 'funeral_boost',
+                    title: 'Dia dos Finados',
+                    description: 'Fluxo de visitantes aumentou!',
+                    effect: 'Velórios rendem 2x mais',
+                    multiplier: 2,
+                    duration: 300 // 5 minutos
+                },
+                {
+                    type: 'mining_boost',
+                    title: 'Prosperidade Mineral',
+                    description: 'Veios ricos descobertos!',
+                    effect: 'Mineração produz 3x mais ossos',
+                    multiplier: 3,
+                    duration: 240 // 4 minutos
+                },
+                {
+                    type: 'treasure_boost',
+                    title: 'Sorte do Caçador',
+                    description: 'Tesouros estão mais fáceis de encontrar!',
+                    effect: 'Chance de tesouro quadruplicada',
+                    multiplier: 4,
+                    duration: 180 // 3 minutos
+                },
+                {
+                    type: 'income_boost',
+                    title: 'Economia Aquecida',
+                    description: 'Demanda por serviços funerários aumentou!',
+                    effect: 'Renda passiva dobrada',
+                    multiplier: 2,
+                    duration: 360 // 6 minutos
+                }
+            ];
             
-            // Inicializar melhorias
+            const event = events[Math.floor(Math.random() * events.length)];
+            gameState.specialEvent = {
+                active: true,
+                type: event.type,
+                endTime: Date.now() + (event.duration * 1000),
+                multiplier: event.multiplier
+            };
+            
+            document.getElementById('event-title').textContent = event.title;
+            document.getElementById('event-description').textContent = event.description;
+            document.getElementById('event-effect').textContent = event.effect;
+            document.getElementById('special-event').style.display = 'block';
+            
+            showNotification(`Evento especial: ${event.title}!`, 'success');
+            addToEventLog(`Evento especial iniciado: ${event.title}`);
+        }
+
+        function updateSpecialEvents() {
+            if (gameState.specialEvent.active && Date.now() > gameState.specialEvent.endTime) {
+                gameState.specialEvent.active = false;
+                document.getElementById('special-event').style.display = 'none';
+                showNotification('Evento especial terminou.', 'info');
+                addToEventLog('Evento especial terminou');
+            }
+            
+            if (gameState.specialEvent.active) {
+                const timeLeft = Math.max(0, gameState.specialEvent.endTime - Date.now());
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                document.getElementById('event-timer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Atualizar display
+        function updateDisplay() {
+            // Atualizar nome do cemitério
+            document.getElementById('cemetery-name-display').textContent = gameState.cemeteryName;
+            
+            // Atualizar estatísticas
+            document.getElementById('money-stat').textContent = Math.floor(gameState.money);
+            document.getElementById('bones-stat').textContent = gameState.bones;
+            document.getElementById('treasure-stat').textContent = gameState.treasures;
+            document.getElementById('coffins-stat').textContent = gameState.coffins;
+            document.getElementById('employees-stat').textContent = gameState.employees;
+            document.getElementById('prestige-stat').textContent = gameState.prestigePoints;
+            
+            // Atualizar informações de prestígio
+            document.getElementById('prestige-info').textContent = `Multiplicador: ${gameState.prestigeMultiplier.toFixed(1)}x | Dia: ${Math.floor(gameState.day)}`;
+            
+            // Atualizar barras de progresso
+            document.getElementById('basic-funeral-progress').style.width = `${gameState.basicFuneralProgress}%`;
+            document.getElementById('premium-funeral-progress').style.width = `${gameState.premiumFuneralProgress}%`;
+            document.getElementById('basic-plan-progress').style.width = `${gameState.basicPlanProgress}%`;
+            document.getElementById('premium-plan-progress').style.width = `${gameState.premiumPlanProgress}%`;
+            document.getElementById('basic-pickaxe-progress').style.width = `${gameState.basicPickaxeProgress}%`;
+            document.getElementById('improved-pickaxe-progress').style.width = `${gameState.improvedPickaxeProgress}%`;
+            document.getElementById('deep-mining-progress').style.width = `${gameState.deepMiningProgress}%`;
+            document.getElementById('short-expedition-progress').style.width = `${gameState.shortExpeditionProgress}%`;
+            document.getElementById('long-expedition-progress').style.width = `${gameState.longExpeditionProgress}%`;
+            
+            // Atualizar contadores
+            document.getElementById('resources-count').textContent = `Ossos: ${gameState.bones}, Tesouros: ${gameState.treasures}`;
+            document.getElementById('passive-income').textContent = gameState.passiveIncome;
+            
+            // Atualizar funcionários
+            document.getElementById('digger-count').textContent = gameState.hiredEmployees.digger;
+            document.getElementById('organizer-count').textContent = gameState.hiredEmployees.organizer;
+            document.getElementById('salesman-count').textContent = gameState.hiredEmployees.salesman;
+            document.getElementById('miner-count').textContent = gameState.hiredEmployees.miner;
+            document.getElementById('gardener-count').textContent = gameState.hiredEmployees.gardener;
+            document.getElementById('security-count').textContent = gameState.hiredEmployees.security;
+            document.getElementById('florist-count').textContent = gameState.hiredEmployees.florist;
+            document.getElementById('manager-count').textContent = gameState.hiredEmployees.manager;
+            
+            // Atualizar custos dos funcionários
+            document.getElementById('digger-cost').textContent = gameState.employeeCosts.digger;
+            document.getElementById('organizer-cost').textContent = gameState.employeeCosts.organizer;
+            document.getElementById('salesman-cost').textContent = gameState.employeeCosts.salesman;
+            document.getElementById('miner-cost').textContent = gameState.employeeCosts.miner;
+            document.getElementById('gardener-cost').textContent = gameState.employeeCosts.gardener;
+            document.getElementById('security-cost').textContent = gameState.employeeCosts.security;
+            document.getElementById('florist-cost').textContent = gameState.employeeCosts.florist;
+            document.getElementById('manager-cost').textContent = gameState.employeeCosts.manager;
+            
+            // Atualizar status da automação
+            updateAutomationStatus();
+            
+            // Atualizar árvore de pesquisa
+            initializeResearchTree();
+        }
+
+        // Atualizar status da automação
+        function updateAutomationStatus() {
+            const automationStatus = document.getElementById('automation-status');
+            automationStatus.innerHTML = '';
+            
+            const employeeEffects = [
+                { type: 'digger', name: 'Coveiros', effect: 'Constroem túmulos automaticamente' },
+                { type: 'organizer', name: 'Organizadores', effect: 'Realizam velórios básicos automaticamente' },
+                { type: 'salesman', name: 'Vendedores', effect: 'Vendem planos funerários automaticamente' },
+                { type: 'miner', name: 'Mineradores', effect: 'Realizam mineração básica automaticamente' },
+                { type: 'gardener', name: 'Jardineiros', effect: 'Aumentam a renda passiva' },
+                { type: 'security', name: 'Seguranças', effect: 'Reduzem eventos negativos' },
+                { type: 'florist', name: 'Floristas', effect: 'Vendem flores para visitantes' },
+                { type: 'manager', name: 'Gerentes', effect: 'Aumentam eficiência de todos os funcionários' }
+            ];
+            
+            employeeEffects.forEach(employee => {
+                if (gameState.hiredEmployees[employee.type] > 0) {
+                    const effectDiv = document.createElement('div');
+                    effectDiv.style.cssText = 'display: flex; justify-content: space-between; padding: 5px 0;';
+                    effectDiv.innerHTML = `
+                        <span>${employee.name}: ${gameState.hiredEmployees[employee.type]}</span>
+                        <span style="color: var(--success);">${employee.effect}</span>
+                    `;
+                    automationStatus.appendChild(effectDiv);
+                }
+            });
+            
+            if (automationStatus.innerHTML === '') {
+                automationStatus.innerHTML = '<p style="text-align: center; color: var(--text-light);">Nenhum funcionário contratado ainda.</p>';
+            }
+        }
+
+        // Adicionar entrada ao log de eventos
+        function addToEventLog(message) {
+            const logContent = document.getElementById('event-log-content');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            logEntry.textContent = `[${timeString}] ${message}`;
+            logContent.appendChild(logEntry);
+            
+            // Manter apenas as últimas 10 entradas
+            while (logContent.children.length > 10) {
+                logContent.removeChild(logContent.firstChild);
+            }
+            
+            // Rolagem automática para a entrada mais recente
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Mostrar notificação
+        function showNotification(message, type) {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px;
+                border-radius: 10px;
+                color: white;
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, var(--success), var(--success-dark))';
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, var(--secondary), var(--secondary-dark))';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remover após a animação
             setTimeout(() => {
-                initializeTooltips();
-                initializeHelpSystem();
-                initializeStatistics();
-                initializeQuestSystem();
-                initializeAutoSave();
-                showNewPlayerHints();
-                
-                // Atualizar estados dos botões periodicamente
-                setInterval(updateButtonStates, 1000);
-                
-                // Atualizar estatísticas de jogo
-                if (!gameState.totalMoneyEarned) gameState.totalMoneyEarned = 0;
-                if (!gameState.totalBonesCollected) gameState.totalBonesCollected = 0;
-                if (!gameState.totalTreasuresFound) gameState.totalTreasuresFound = 0;
-                if (!gameState.funeralsHeld) gameState.funeralsHeld = 0;
-                if (!gameState.plansSold) gameState.plansSold = 0;
-                if (!gameState.playTime) gameState.playTime = 0;
-                if (!gameState.totalPrestigeEarned) gameState.totalPrestigeEarned = 0;
-                if (!gameState.totalEmployeesHired) gameState.totalEmployeesHired = 0;
-                
-                // Atualizar tempo de jogo
-                setInterval(() => {
-                    gameState.playTime++;
-                }, 1000);
-            }, 1000);
-        });
-        
-        // Modificar funções existentes para rastrear estatísticas
-        const originalAddToEventLog = addToEventLog;
-        addToEventLog = function(message) {
-            originalAddToEventLog(message);
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Trocar de aba
+        function switchTab(tabId) {
+            // Remover classe active de todas as abas e conteúdos
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Rastrear estatísticas baseadas em eventos
-            if (message.includes('+💰') && !message.includes('Vendeu')) {
-                const amount = parseInt(message.match(/\+💰(\d+)/)?.[1] || 0);
-                gameState.totalMoneyEarned += amount;
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Adicionar classe active à aba selecionada
+            const selectedTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
             }
             
-            if (message.includes('+🦴')) {
-                const amount = parseInt(message.match(/\+🦴(\d+)/)?.[1] || 0);
-                gameState.totalBonesCollected += amount;
+            const tabContent = document.getElementById(`${tabId}-tab`);
+            if (tabContent) {
+                tabContent.classList.add('active');
             }
+        }
+
+        // Iniciar novo jogo
+        function startNewGame() {
+            // Reiniciar estado do jogo
+            gameState.money = 1000 + (gameState.prestigeUpgrades.initialMoney * 1000);
+            gameState.bones = 0;
+            gameState.treasures = 0;
+            gameState.coffins = 5;
+            gameState.employees = 0;
+            gameState.day = 1;
+            gameState.cemeterySize = 8;
+            gameState.cemeteryGrid = [];
+            gameState.basicFuneralProgress = 0;
+            gameState.premiumFuneralProgress = 0;
+            gameState.basicPlanProgress = 0;
+            gameState.premiumPlanProgress = 0;
+            gameState.passiveIncome = 0;
+            gameState.basicPickaxeProgress = 0;
+            gameState.improvedPickaxeProgress = 0;
+            gameState.deepMiningProgress = 0;
+            gameState.shortExpeditionProgress = 0;
+            gameState.longExpeditionProgress = 0;
+            gameState.treasuresCollection = [];
+            gameState.hiredEmployees = {
+                digger: 0,
+                organizer: 0,
+                salesman: 0,
+                miner: 0,
+                gardener: 0,
+                security: 0,
+                florist: 0,
+                manager: 0
+            };
+            gameState.employeeCosts = {
+                digger: 500,
+                organizer: 800,
+                salesman: 600,
+                miner: 1000,
+                gardener: 1200,
+                security: 1500,
+                florist: 900,
+                manager: 3000
+            };
+            gameState.specialEvent = {
+                active: false,
+                type: null,
+                endTime: 0,
+                multiplier: 1
+            };
             
-            if (message.includes('Encontrou tesouro') || message.includes('encontrou Diamante')) {
-                gameState.totalTreasuresFound++;
+            showScreen('game-screen');
+            initializeCemetery();
+            updateDisplay();
+            
+            // Limpar log de eventos
+            document.getElementById('event-log-content').innerHTML = '';
+            addToEventLog('Novo jogo iniciado');
+            
+            // Ativar a primeira aba
+            switchTab('cemetery');
+        }
+
+        // Carregar jogo
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('cemeteryTycoonSave');
+                if (saved) {
+                    const savedState = JSON.parse(saved);
+                    
+                    // Preservar o estado do tema
+                    const currentDarkMode = gameState.darkMode;
+                    
+                    Object.assign(gameState, savedState);
+                    
+                    // Restaurar o estado do tema
+                    gameState.darkMode = currentDarkMode;
+                    document.body.classList.toggle('dark-mode', gameState.darkMode);
+                    
+                    const themeIcons = document.querySelectorAll('.theme-toggle i');
+                    themeIcons.forEach(icon => {
+                        if (gameState.darkMode) {
+                            icon.className = 'fas fa-sun';
+                        } else {
+                            icon.className = 'fas fa-moon';
+                        }
+                    });
+                    
+                    showScreen('game-screen');
+                    initializeCemetery();
+                    updateDisplay();
+                    initializeAchievements();
+                    initializeDailyBonus();
+                    initializeResearchTree();
+                    
+                    addToEventLog('Jogo carregado');
+                    showNotification('Jogo carregado com sucesso!', 'success');
+                    
+                    // Ativar a primeira aba
+                    switchTab('cemetery');
+                } else {
+                    showNotification('Nenhum jogo salvo encontrado.', 'info');
+                }
+            } catch (e) {
+                console.error('Erro ao carregar jogo:', e);
+                showNotification('Erro ao carregar jogo salvo.', 'error');
             }
-            
-            if (message.includes('velório') && message.includes('concluído')) {
-                gameState.funeralsHeld++;
+        }
+
+        // Salvar jogo
+        function saveGame() {
+            try {
+                localStorage.setItem('cemeteryTycoonSave', JSON.stringify(gameState));
+                showNotification('Jogo salvo com sucesso!', 'success');
+                addToEventLog('Jogo salvo');
+            } catch (e) {
+                console.error('Erro ao salvar jogo:', e);
+                showNotification('Erro ao salvar jogo.', 'error');
             }
+        }
+
+        // Mostrar tela específica
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
             
-            if (message.includes('vendeu um plano')) {
-                gameState.plansSold++;
-            }
-            
-            if (message.includes('Contratou um')) {
-                gameState.totalEmployeesHired++;
-            }
-            
-            if (message.includes('Reiniciou por prestígio')) {
-                const amount = parseInt(message.match(/\+⭐(\d+)/)?.[1] || 0);
-                gameState.totalPrestigeEarned += amount;
-            }
-        };
-        
-        // Atualizar o loop do jogo para incluir as melhorias
-        const originalGameLoop = gameLoop;
-        gameLoop = function() {
-            originalGameLoop();
-            
-            // Atualizar estados dos botões
-            updateButtonStates();
-            
-            // Atualizar missões
-            updateQuests();
-            
-            // Atualizar estatísticas se a aba estiver ativa
-            if (document.querySelector('.tab.active[data-tab="stats"]')) {
-                updateStatistics();
-            }
-        };
+            document.getElementById(screenId).classList.add('active');
+        }
     </script>
 </body>
 </html>
